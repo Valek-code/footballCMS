@@ -8,7 +8,6 @@
 * [WIP]"projekt.sql" sadrzi kod za generiranje baze podataka, relacija i unos privremenih vrijednosti u iste (note: Nije konacan dizajn)
 #
 
-***
 
 ## Instalacija potrebnih biblioteka
 
