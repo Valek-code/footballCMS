@@ -10,7 +10,7 @@ db = mysql.connector.connect(
     host="localhost",
     user="user",
     auth_plugin='mysql_native_password',
-    passwd="V#l3k698",
+    passwd="lozinka(upisi_svoju_lol)",
     db="projekt"
 )
 
