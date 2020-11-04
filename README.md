@@ -1,2 +1,2 @@
-# footballCMS
+# Football CMS
 College project
