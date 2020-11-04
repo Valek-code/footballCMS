@@ -20,3 +20,128 @@ Da bi instalirali potrebne biblioteke locirajte python terminal i upisite sljede
 pip install mysql-connector-python
 ```
 
+## Tablice
+
+**Tablice nistu konacne ( keep that in mind )*
+
+### Tim
+| ID | ime | kratica | drzava_id | grad_id |
+|----|-----|---------|-----------|---------|
+|    |     |         |           |         |
+|    |     |         |           |         |
+|    |     |         |           |         |
+|    |     |         |           |         |
+
+### Drzava
+
+| ID | ime_drzave |
+|----|------------|
+|    |            |
+|    |            |
+|    |            |
+|    |            |
+
+### Grad
+
+| ID | ime_grada |
+|----|-----------|
+|    |           |
+|    |           |
+|    |           |
+|    |           |
+
+### Igrac
+
+| ID | ime | prezime | datum_rodenja | drzava_id | grad_id | tim_id |
+|----|-----|---------|---------------|-----------|---------|--------|
+|    |     |         |               |           |         |        |
+|    |     |         |               |           |         |        |
+|    |     |         |               |           |         |        |
+|    |     |         |               |           |         |        |
+
+### Trener
+
+| ID | ime | prezime | datum_rodenja | drzava_id | grad_id | tim_id |
+|----|-----|---------|---------------|-----------|---------|--------|
+|    |     |         |               |           |         |        |
+|    |     |         |               |           |         |        |
+|    |     |         |               |           |         |        |
+|    |     |         |               |           |         |        |
+|    |     |         |               |           |         |        |
+
+### Sesija
+
+| ID | tim_id - 1 | tim_id - 2 | pocetak | kraj | id_stadion |
+|----|------------|------------|---------|------|------------|
+|    |            |            |         |      |            |
+|    |            |            |         |      |            |
+|    |            |            |         |      |            |
+|    |            |            |         |      |            |
+
+
+### Statistika
+
+| tim_id | rezultat | posjed lopte | out | sutevi | sutevi unutar okvira |
+|--------|----------|--------------|-----|--------|----------------------|
+|        |          |              |     |        |                      |
+|        |          |              |     |        |                      |
+|        |          |              |     |        |                      |
+|        |          |              |     |        |                      |
+
+### Zamjene
+
+| igrac_id | tim_id |
+|----------|--------|
+|          |        |
+|          |        |
+|          |        |
+|          |        |
+
+
+### Statistika-zamjene
+
+| id_sesija | igrac_id - 1 | igrac_id | tim_id |
+|-----------|--------------|----------|--------|
+|           |              |          |        |
+|           |              |          |        |
+|           |              |          |        |
+|           |              |          |        |
+
+### Statistika-kazne
+
+| id_sesija | igrac_id | tip kazne(karton) | sudac_id |
+|-----------|----------|-------------------|----------|
+|           |          |                   |          |
+|           |          |                   |          |
+|           |          |                   |          |
+|           |          |                   |          |
+
+### Igrac-Tim-Postava
+
+| id_igrac | id_tim | postava |
+|----------|--------|---------|
+|          |        |         |
+|          |        |         |
+|          |        |         |
+|          |        |         |
+
+### Stadion
+
+| ID | naziv_stadiona | drzava_id | grad_id | kapacitet_gledatelja |
+|----|----------------|-----------|---------|----------------------|
+|    |                |           |         |                      |
+|    |                |           |         |                      |
+|    |                |           |         |                      |
+|    |                |           |         |                      |
+
+
+### Sudci
+
+| ID | ime | prezime | datum_rodenja | drzava_id | grad_id |
+|----|-----|---------|---------------|-----------|---------|
+|    |     |         |               |           |         |
+|    |     |         |               |           |         |
+|    |     |         |               |           |         |
+|    |     |         |               |           |         |
+
+
