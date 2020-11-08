@@ -55,15 +55,16 @@ CREATE TABLE sudac(
     datum_rodenja DATETIME,
     id_drzava INT NOT NULL,
     id_grad INT NOT NULL,
-    id_tim INT NOT NULL,
     FOREIGN KEY (id_drzava) REFERENCES drzava(id),
     FOREIGN KEY (id_grad) REFERENCES grad(id)
 );
 
-CREATE TABLE postava(
+CREATE TABLE postava(   /* igrac u kojem timu i na kojem polozaju */ 
 	id_igrac INT NOT NULL,
 	id_tim INT NOT NULL,
-    postava VARCHAR(25) NOT NULL
+    postava VARCHAR(25) NOT NULL,
+    FOREIGN KEY (id_igrac) REFERENCES igrac(id),
+    FOREIGN KEY (id_tim) REFERENCES tim(id)
 );
 
 CREATE TABLE stadion(
@@ -80,9 +81,11 @@ CREATE TABLE sesija(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     tim1_id INT NOT NULL,
     tim2_id INT NOT NULL,
+    id_stadion INT NOT NULL,
     CONSTRAINT CHK_tim2 CHECK ( tim1_id != tim2_id ),
     FOREIGN KEY (tim1_id) REFERENCES tim(id),
-    FOREIGN KEY (tim1_id) REFERENCES tim(id)
+    FOREIGN KEY (tim2_id) REFERENCES tim(id),
+    FOREIGN KEY (id_stadion) REFERENCES stadio(id)
 );
 
 CREATE TABLE sudac_sesija(
@@ -162,4 +165,3 @@ VALUES
 ("Sport Club Mangueira", "SCM", 3,3),
 ("Bayern", "FCB",4,4),
 ("Paris Saint-Germain","PSG", 5,5);
-
