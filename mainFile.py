@@ -4,54 +4,100 @@ from PIL import ImageTk, Image
 import mysql.connector
 import csv
 
-
-
+# otvaranje veze s lokalnom bazom podataka
 db = mysql.connector.connect(
     host="localhost",
-    user="user",
-    auth_plugin='mysql_native_password',
-    passwd="lozinka(upisi_svoju_lol)",
-    db="projekt"
+    user="user", # user na koji se spaja
+    auth_plugin='mysql_native_password', # don't touch prekidach
+    passwd="vasa_lozinka", # loznika vaseg user-a u database ( vrlo vjerojatno lozinka root user-a )
+    db="projekt" # naziv sheme/baze
 )
 
-cursor = db.cursor()
+cursor = db.cursor() # cursor koji dohvaca podatke iz baze
+                     # u globalu je cisto da se moze koristiti bilo gdje unutar koda
 
 
+# stvara prozor za slanje obavjesti korisniku ( npr. success or fail te druge povratne informacije )
+def alertWindow(_text):
+    Alert_Win = Tk()
+    Alert_Win.title("Alert")
+    Alert_Win.geometry("350x100")
+
+    _label = Label(Alert_Win, text=f"{_text}")
+    _label.pack()
+
+#puni selekciju gradova
 def popuniGradIzbor(lista):
+
     cursor.execute("SELECT * FROM grad")
     rezultati = cursor.fetchall()
     for x in rezultati:
         lista.insert(END, f"{x[1]}")
 
+
+#puni selekciju drzava
 def popuniDrzaveIzbor(lista):
+
     cursor.execute("SELECT * FROM drzava")
     rezultati = cursor.fetchall()
     for x in rezultati:
         lista.insert(END, f"{x[1]}")
 
-def getTimovi():
+
+
+#dohvaca sve timove i ispisuje ih na zaseban prozor
+def showTeams():
+
+    prikaziTim = Tk()
+    prikaziTim.title("Lista timova")
+    prikaziTim.geometry("250x500")
+
     cursor.execute("SELECT * FROM tim")
     rezultati = cursor.fetchall()
 
     for index,rezultat in enumerate(rezultati):
 
-        test_label = Label(frame5, text=f"{rezultat[0]}. {rezultat[1]} | {rezultat[2]}", bg="white")
+        test_label = Label(prikaziTim, text=f"{rezultat[0]}. {rezultat[1]} | {rezultat[2]}", bg="white")
         test_label.pack()
 
-def refreshTim():
+
+
+# brise tim iz baze
+def deleteTeamEntry():
+
+    def deleteTeam():
+        izbor = lista_timova.get(lista_timova.curselection())
+        cursor.execute(f"DELETE FROM tim WHERE ime = '{izbor}'")
+        db.commit()
+        alertWindow(f"Tim {izbor} uspjesno izbrisan!")
+
+    deleteTeamWin = Tk()
+    deleteTeamWin.title("Brisanje Tima")
+    deleteTeamWin.geometry("250x250")
+
     cursor.execute("SELECT * FROM tim")
     rezultati = cursor.fetchall()
 
+    # generiranje liste koja cuva podatke o timovima
+    lista_timova = Listbox(deleteTeamWin, exportselection=0)
+    lista_timova.pack()
 
+    # puni se selekcija za brisanje timova
+    for x in rezultati:
+        lista_timova.insert(END, f"{x[1]}")
+
+    brisiGumb = Button(deleteTeamWin, text="Izbrisi", pady=5, command=deleteTeam)
+    brisiGumb.pack()
+
+
+# dodaje Tim koji puni korisnik sucelja custom podacima
 def dodajTim():
-
 
     def timToDb(ime, kratica, drzava, grad):
         cursor.execute(f"""INSERT INTO tim(ime,kratica,id_drzava,id_grad) 
                                 VALUES("{ime}","{kratica}",{drzava},{grad})""")
         db.commit()
         clear()
-        refreshTim()
 
     def clear():
         entry_ime.delete(0, END)
@@ -74,7 +120,6 @@ def dodajTim():
 
     label_grad = Label(dodajTim, text="Grad")
     label_grad.grid(row=3, column=0)
-####################################################
 
 
     entry_ime = Entry(dodajTim)
@@ -99,6 +144,7 @@ def dodajTim():
 root = Tk()
 root.title("Baze podataka - Projekt")
 root.geometry("500x500")
+
 
 
 
@@ -131,13 +177,16 @@ my_notebook.add(frame4, text="Sudci")
 my_notebook.add(frame5, text="Timovi")
 
 test_label = Label(frame5, text="No records to show", bg="white")
-getTimovi()
+#getTimovi()
 
 
 #gumbi frame 5
 dodaj_klub_gumb = Button(frame5, text="Dodaj tim", pady=5, command=dodajTim)
+prikazi_klubove_gumb = Button(frame5, text="Prikazi timove", pady=5, command=showTeams)
+izbrisi_tim_gumb = Button(frame5, text="Brisanje timova", pady=5, command=deleteTeamEntry)
+
 dodaj_klub_gumb.pack()
-
-
+prikazi_klubove_gumb.pack()
+izbrisi_tim_gumb.pack()
 
 root.mainloop()
