@@ -169,19 +169,8 @@ INSERT INTO igrac(id, ime, prezime, datum_rodenja, id_drzava, id_grad, id_tim) V
 (6, "Elena", "Ilic", STR_TO_DATE('18.10.2000.', '%d.%m.%Y.'), 4, 4, 4),
 (7, "David", "Sajina", STR_TO_DATE('19.10.2000.', '%d.%m.%Y.'), 4, 4, 4);
 INSERT INTO trener(id, ime, prezime, datum_rodenja, id_drzava, id_grad, id_tim) VALUES
-(9, "Trener", "vvv", STR_TO_DATE('10.10.2000.', '%d.%m.%Y.'), 2, 2, 2);
+(8, "Trener", "Valek", STR_TO_DATE('10.10.2000.', '%d.%m.%Y.'), 1, 1, 1);
 
-INSERT INTO sesija (id, tim1_id, tim2_id) VALUES
-(1, 1, 2),
-(2, 2, 3),
-(3, 2, 1);
-INSERT INTO sudac(id, ime, prezime, id_grad, id_drzava) VALUES
-(1, "Sudac", "Prvi",1,1),
-(2, "Sudac", "Drugi",1,1);
-INSERT INTO sudac_sesija(id_sesija, id_sudac, tip) VALUES
-(1,1,"bla"),
-(2,1,"a"),
-(3,2,"b");
 Select ime from igrac;
 
 drop procedure pr_4;
