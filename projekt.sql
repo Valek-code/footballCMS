@@ -1,3 +1,4 @@
+
 CREATE DATABASE projekt;
 USE projekt;
 
@@ -32,7 +33,6 @@ CREATE TABLE igrac(
     FOREIGN KEY (id_grad) REFERENCES grad(id),
     FOREIGN KEY (id_tim) REFERENCES tim(id)
 );
-
 CREATE TABLE trener(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	ime varchar(100) NOT NULL,
@@ -53,7 +53,6 @@ CREATE TABLE sudac(
     datum_rodenja DATETIME,
     id_drzava INT NOT NULL,
     id_grad INT NOT NULL,
-    id_tim INT NOT NULL,
     FOREIGN KEY (id_drzava) REFERENCES drzava(id),
     FOREIGN KEY (id_grad) REFERENCES grad(id)
 );
@@ -73,7 +72,6 @@ CREATE TABLE stadion(
     FOREIGN KEY (id_drzava) REFERENCES drzava(id),
     FOREIGN KEY (id_grad) REFERENCES grad(id)
 );
-
 CREATE TABLE sesija(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     tim1_id INT NOT NULL,
@@ -83,7 +81,6 @@ CREATE TABLE sesija(
     FOREIGN KEY (tim1_id) REFERENCES tim(id),
     FOREIGN KEY (tim1_id) REFERENCES tim(id)
 );
-
 CREATE TABLE sudac_sesija(
 	id_sesija INT NOT NULL,
 	id_sudac INT NOT NULL,
@@ -171,16 +168,35 @@ INSERT INTO igrac(id, ime, prezime, datum_rodenja, id_drzava, id_grad, id_tim) V
 (5, "Andrej", "Korica", STR_TO_DATE('15.10.2000.', '%d.%m.%Y.'), 3, 3, 3),
 (6, "Elena", "Ilic", STR_TO_DATE('18.10.2000.', '%d.%m.%Y.'), 4, 4, 4),
 (7, "David", "Sajina", STR_TO_DATE('19.10.2000.', '%d.%m.%Y.'), 4, 4, 4);
+INSERT INTO trener(id, ime, prezime, datum_rodenja, id_drzava, id_grad, id_tim) VALUES
+(9, "Trener", "vvv", STR_TO_DATE('10.10.2000.', '%d.%m.%Y.'), 2, 2, 2);
+
+INSERT INTO sesija (id, tim1_id, tim2_id) VALUES
+(1, 1, 2),
+(2, 2, 3),
+(3, 2, 1);
+INSERT INTO sudac(id, ime, prezime, id_grad, id_drzava) VALUES
+(1, "Sudac", "Prvi",1,1),
+(2, "Sudac", "Drugi",1,1);
+INSERT INTO sudac_sesija(id_sesija, id_sudac, tip) VALUES
+(1,1,"bla"),
+(2,1,"a"),
+(3,2,"b");
 Select ime from igrac;
 
 drop procedure pr_4;
 DELIMITER //
-CREATE PROCEDURE pr_4 (IN i_id INT, OUT r VARCHAR(500))
+CREATE PROCEDURE pr_4 (IN i_id INT, OUT r VARCHAR(700), OUT r2 VARCHAR(60))
 BEGIN
 DECLARE pomocni VARCHAR(50) DEFAULT '';
 DECLARE pomocni2 VARCHAR(50) DEFAULT '';
 DECLARE pomocni3 INT DEFAULT 0;
+DECLARE pomocni4 VARCHAR(50) DEFAULT '';
+DECLARE pomocni5 VARCHAR(50) DEFAULT '';
+DECLARE pomocni6 INT DEFAULT 0;
+DECLARE br INTEGER DEFAULT 0;
 DECLARE f INTEGER DEFAULT 0;
+
 DECLARE kursor CURSOR FOR
 SELECT ime FROM igrac;
 DECLARE kursor2 CURSOR FOR
@@ -188,12 +204,31 @@ SELECT prezime from igrac;
 DECLARE kursor3 CURSOR FOR
 SELECT id_tim from igrac;
 
+DECLARE kursor4 CURSOR FOR
+SELECT ime FROM trener;
+DECLARE kursor5 CURSOR FOR
+SELECT prezime from trener;
+DECLARE kursor6 CURSOR FOR
+SELECT id_tim from trener;
 DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET  f=1;
-SET r=' ';
+SET r='Igraci';
+SET r2=' ';
 
-OPEN kursor;
-open kursor2;
-open kursor3;
+OPEN kursor4; OPEN kursor5; OPEN kursor6;
+petlja: LOOP 
+FETCH kursor4 INTO pomocni4;
+FETCH kursor5 INTO pomocni5;
+FETCH kursor6 INTO pomocni6;
+IF br=1 THEN LEAVE petlja;
+END IF;
+IF i_id=pomocni6 THEN
+SET r2 = CONCAT("Trener: ",pomocni4, " ", pomocni5), br=1;
+END IF;
+END LOOP petlja;
+CLOSE kursor4; CLOSE kursor5; CLOSE kursor6;
+
+OPEN kursor; OPEN kursor2; OPEN kursor3;
+SET f=0;
 petlja: LOOP 
 FETCH kursor INTO pomocni;
 FETCH kursor2 INTO pomocni2;
@@ -201,15 +236,37 @@ FETCH kursor3 INTO pomocni3;
 IF f=1 THEN LEAVE petlja;
 END IF;
 IF (i_id=pomocni3) THEN
-SET r = CONCAT(r, " ; ", pomocni, " ", pomocni2);
+SET r = CONCAT(r, "; ", pomocni, " ", pomocni2);
 END IF;
 END LOOP petlja;
-CLOSE kursor;
-CLOSE kursor2;
-CLOSE kursor3;
+CLOSE kursor; CLOSE kursor2; CLOSE kursor3;
 END//
 DELIMITER ;
 
-CALL pr_4(1,@rez);
-SELECT @rez;
-Select * from igrac;
+CALL pr_4(1,@rez,@r);
+SELECT @r,@rez;
+SELECT * FROM trener;
+-- -- -- -- -- -- -- Ispisuje sve o igracima odabirom id tim -- -- -- -- -- -- --
+SELECT i.id, i.ime, i.prezime, t.ime as tim, d.ime as drzava, g.ime as grad, tr.Ime as Ime_Trener, tr.prezime as Prez_Trener
+ FROM igrac AS i LEFT JOIN tim AS t
+ ON i.id_tim=t.id
+ LEFT JOIN drzava as d ON i.id_drzava=d.id
+ LEFT JOIN grad as g ON i.id_grad=g.id
+ LEFT JOIN trener as tr ON tr.id_tim=t.id
+ WHERE i.id_tim=1
+ GROUP BY i.id;
+ 
+ drop function br_s;
+ DELIMITER //
+ CREATE FUNCTION br_s (  p_id_sudac INT) RETURNS INT
+DETERMINISTIC 
+	BEGIN 
+	DECLARE rez INT;
+    
+    SELECT COUNT(*) as broj_sudjenja INTO rez
+ FROM sudac AS s LEFT JOIN sudac_sesija AS se
+ ON s.id=se.id_sudac WHERE s.id=p_id_sudac;
+    RETURN rez;
+END //
+DELIMITER ;
+SELECT br_s(1);
