@@ -101,6 +101,7 @@ def dodajTim():
     popuniDrzaveIzbor(lista_drzava)
     popuniGradIzbor(lista_gradova)
 
+# funkcija(argument)
+
     dodajTim_gumb = Button(dodajTim, text="Dodaj", command=lambda:timToDb(entry_ime.get(),entry_kratica.get(), lista_drzava.curselection()[0]+1, lista_gradova.curselection()[0]+1))
     dodajTim_gumb.grid(row=4, column=1, columnspan=2)
-
