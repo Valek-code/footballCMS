@@ -21,6 +21,7 @@ CREATE TABLE tim(
     FOREIGN KEY (id_drzava) REFERENCES drzava(id),
     FOREIGN KEY (id_grad) REFERENCES grad(id)
 );
+
 CREATE TABLE igrac(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	ime varchar(100) NOT NULL,
@@ -33,6 +34,7 @@ CREATE TABLE igrac(
     FOREIGN KEY (id_grad) REFERENCES grad(id),
     FOREIGN KEY (id_tim) REFERENCES tim(id)
 );
+
 CREATE TABLE trener(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	ime varchar(100) NOT NULL,
@@ -72,6 +74,7 @@ CREATE TABLE stadion(
     FOREIGN KEY (id_drzava) REFERENCES drzava(id),
     FOREIGN KEY (id_grad) REFERENCES grad(id)
 );
+
 CREATE TABLE sesija(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_tim1 INT NOT NULL,
@@ -86,7 +89,7 @@ CREATE TABLE sesija(
     FOREIGN KEY (id_stadion) REFERENCES stadion(id)
 );
 
-CREATE TABLE out_s(
+CREATE TABLE out_s( /* jer nemoze pisati OUT pa je out_s :D */
 	id_sesija INT NOT NULL,
     id_tim1 INT NOT NULL,
     id_tim2 INT NOT NULL,
