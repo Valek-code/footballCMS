@@ -29,15 +29,11 @@ def pokaziSesije():
 # dodaje sesiju koju puni korisnik sucelja custom podacima
 def dodajSesiju():
 
-    def sesijaToDb(tim1_id, tim2_id):
-        cursor.execute(f"""INSERT INTO sesija(tim1_id,tim2_id) 
-                                VALUES("{tim1_id}","{tim2_id}")""")
+    def sesijaToDb(tim1_id, tim2_id, id_sudac, id_stadion, datumSesije):
+        cursor.execute(f"""INSERT INTO sesija(id_tim1,id_tim2,id_sudac,id_stadion,datum_sesija) 
+                                VALUES({tim1_id},{tim2_id},{id_sudac},{id_stadion},STR_TO_DATE('{datumSesije}','%d/%m/%Y'))""")
         db.commit()
-        clear()
-
-    def clear():
-        lista_timova1.delete(0, END)
-        lista_timova2.delete(0, END)
+        alertWindow(f'Nova sesija uspješno kreirana..')
 
     def dobiIDtima():
         izbor = lista_timova1.get(lista_timova1.curselection())
@@ -51,9 +47,15 @@ def dodajSesiju():
         id = cursor.fetchone()
         return id[0]
 
+    def dobiIDStadiona():
+        izbor = lista_stadiona.get(lista_stadiona.curselection())
+        cursor.execute(f"SELECT * FROM stadion WHERE naziv = '{izbor}'")
+        id = cursor.fetchone()
+        return id[0]
+
     dodaj_sesiju = Tk()
     dodaj_sesiju.title("Dodaj sesiju")
-    dodaj_sesiju.geometry("250x500")
+    dodaj_sesiju.geometry("250x730")
 
     label_tim1 = Label(dodaj_sesiju, text="Tim 1")
     label_tim1.grid(row=0, column=0)
@@ -67,11 +69,34 @@ def dodajSesiju():
     lista_timova2 = Listbox(dodaj_sesiju, exportselection=0)
     lista_timova2.grid(row=1, column=1)
 
+######################################################################
+
+    label_stadion = Label(dodaj_sesiju, text="Stadion: ")
+    label_stadion.grid(row=2, column=0)
+
+    label_sudac = Label(dodaj_sesiju, text="Sudac[ID]: ")
+    label_sudac.grid(row=3, column=0)
+
+    lista_stadiona = Listbox(dodaj_sesiju, exportselection=0)
+    lista_stadiona.grid(row=2, column=1)
+
+    lista_sudaca = Listbox(dodaj_sesiju, exportselection=0)
+    lista_sudaca.grid(row=3, column=1)
+
+    label_datum = Label(dodaj_sesiju, text="Datum(dd/mm/yyyy): ")
+    label_datum.grid(row=4, column=0)
+
+    entry_datum = Entry(dodaj_sesiju)
+    entry_datum.grid(row=4, column=1)
+
+
     popuniTimoveIzbor(lista_timova1)
     popuniTimoveIzbor(lista_timova2)
+    popuniStadioneIzbor(lista_stadiona)
+    popuniSudceIzbor(lista_sudaca)
 
-    dodajIgraca_gumb = Button(dodaj_sesiju, text="Dodaj", command=lambda:sesijaToDb(dobiIDtima(), dobiIDtima2()))
-    dodajIgraca_gumb.grid(row=6, column=1, columnspan=2)
+    dodajIgraca_gumb = Button(dodaj_sesiju, text="Dodaj", command=lambda:sesijaToDb(dobiIDtima(), dobiIDtima2(), lista_sudaca.get(lista_sudaca.curselection()), dobiIDStadiona(),entry_datum.get()))
+    dodajIgraca_gumb.grid(row=7, column=1, columnspan=2)
 
 
 # brise sesije iz baze
@@ -96,7 +121,7 @@ def deleteSesijaEntry():
 
     # puni se selekcija za brisanje sesija
     for x in rezultati:
-        lista_sesija.insert(END, f"{x[1]}")
+        lista_sesija.insert(END, f"{x[0]}")
 
     brisiGumb = Button(deleteSesijaWin, text="Izbrisi", pady=5, command=deleteSesija)
     brisiGumb.pack()

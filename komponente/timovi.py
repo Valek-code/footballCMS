@@ -6,7 +6,7 @@ from komponente import selekcije
 from komponente.selekcije import *
 from komponente.sqlConnection import *
 
-
+from komponente.alertWindows import *
 
 #dohvaca sve timove i ispisuje ih na zaseban prozor
 def showTeams():
@@ -19,7 +19,7 @@ def showTeams():
 
     for index,rezultat in enumerate(rezultati):
 
-        test_label = Label(prikaziTim, text=f"{rezultat[0]}. {rezultat[1]} | {rezultat[2]}", bg="white")
+        test_label = Label(prikaziTim, text=f"{index+1}. {rezultat[1]} | {rezultat[2]}", bg="white")
         test_label.pack()
 
 
@@ -57,17 +57,25 @@ def deleteTeamEntry():
 # dodaje Tim koji puni korisnik sucelja custom podacima
 def dodajTim():
 
-    def timToDb(ime, kratica, drzava, grad):
-        cursor.execute(f"""INSERT INTO tim(ime,kratica,id_drzava,id_grad) 
-                                VALUES("{ime}","{kratica}",{drzava},{grad})""")
+    def timToDb(ime, kratica, grad):
+
+
+        cursor.execute(f"""INSERT INTO tim(ime,kratica,id_grad) 
+                                VALUES("{ime}","{kratica}",{grad})""")
         db.commit()
         clear()
+        alertWindow(f'Uspješno dodan "{ime}" u bazu podataka')
 
     def clear():
         entry_ime.delete(0, END)
         entry_kratica.delete(0, END)
         lista_gradova.selection_clear(0, END)
-        lista_drzava.selection_clear(0, END)
+
+    def getGradIDFromName():
+        izbor = lista_gradova.get(lista_gradova.curselection())
+        cursor.execute(f"SELECT * FROM grad WHERE ime = '{izbor}'")
+        id = cursor.fetchone()
+        return id[0]
 
     dodajTim = Tk()
     dodajTim.title("Dodaj tim")
@@ -79,11 +87,8 @@ def dodajTim():
     label_kratica = Label(dodajTim, text="Kratica")
     label_kratica.grid(row=1, column=0)
 
-    label_drzava = Label(dodajTim, text="Drzava")
-    label_drzava.grid(row=2, column=0)
-
     label_grad = Label(dodajTim, text="Grad")
-    label_grad.grid(row=3, column=0)
+    label_grad.grid(row=2, column=0)
 
 
     entry_ime = Entry(dodajTim)
@@ -92,16 +97,12 @@ def dodajTim():
     entry_kratica = Entry(dodajTim)
     entry_kratica.grid(row=1, column=1)
 
-    lista_drzava = Listbox(dodajTim, exportselection=0)
-    lista_drzava.grid(row=2, column=1)
-
     lista_gradova = Listbox(dodajTim, exportselection=0)
-    lista_gradova.grid(row=3, column=1)
+    lista_gradova.grid(row=2, column=1)
 
-    popuniDrzaveIzbor(lista_drzava)
     popuniGradIzbor(lista_gradova)
 
 # funkcija(argument)
 
-    dodajTim_gumb = Button(dodajTim, text="Dodaj", command=lambda:timToDb(entry_ime.get(),entry_kratica.get(), lista_drzava.curselection()[0]+1, lista_gradova.curselection()[0]+1))
+    dodajTim_gumb = Button(dodajTim, text="Dodaj", command=lambda:timToDb(entry_ime.get(),entry_kratica.get(), getGradIDFromName()))
     dodajTim_gumb.grid(row=4, column=1, columnspan=2)

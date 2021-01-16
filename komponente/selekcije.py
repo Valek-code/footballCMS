@@ -26,3 +26,19 @@ def popuniTimoveIzbor(lista):
     rezultati = cursor.fetchall()
     for x in rezultati:
         lista.insert(END, f"{x[1]}")
+
+#puni selekciju sudaca
+def popuniSudceIzbor(lista):
+
+    cursor.execute("SELECT * FROM sudac")
+    rezultati = cursor.fetchall()
+    for x in rezultati:
+        lista.insert(END, f"{x[0]}")
+
+#puni selekciju stadiona
+def popuniStadioneIzbor(lista):
+
+    cursor.execute("SELECT * FROM stadion")
+    rezultati = cursor.fetchall()
+    for x in rezultati:
+        lista.insert(END, f"{x[1]}")

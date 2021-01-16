@@ -9,16 +9,16 @@ CREATE TABLE drzava(
 
 CREATE TABLE grad(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	ime VARCHAR(100) NOT NULL
+	ime VARCHAR(100) NOT NULL,
+    id_drzava INT NOT NULL,
+    FOREIGN KEY (id_drzava) REFERENCES drzava(id)
 );
 
 CREATE TABLE tim(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	ime VARCHAR(100) NOT NULL,
 	kratica VARCHAR(5) NOT NULL,
-    id_drzava INT NOT NULL,
     id_grad INT NOT NULL,
-    FOREIGN KEY (id_drzava) REFERENCES drzava(id),
     FOREIGN KEY (id_grad) REFERENCES grad(id)
 );
 
@@ -27,10 +27,8 @@ CREATE TABLE igrac(
 	ime varchar(100) NOT NULL,
 	prezime varchar(100) NOT NULL,
     datum_rodenja DATETIME,
-    id_drzava INT NOT NULL,
     id_grad INT NOT NULL,
     id_tim INT NOT NULL,
-    FOREIGN KEY (id_drzava) REFERENCES drzava(id),
     FOREIGN KEY (id_grad) REFERENCES grad(id),
     FOREIGN KEY (id_tim) REFERENCES tim(id)
 );
@@ -40,10 +38,8 @@ CREATE TABLE trener(
 	ime varchar(100) NOT NULL,
 	prezime varchar(100) NOT NULL,
     datum_rodenja DATETIME,
-    id_drzava INT NOT NULL,
     id_grad INT NOT NULL,
     id_tim INT NOT NULL,
-    FOREIGN KEY (id_drzava) REFERENCES drzava(id),
     FOREIGN KEY (id_grad) REFERENCES grad(id),
     FOREIGN KEY (id_tim) REFERENCES tim(id)
 );
@@ -53,9 +49,7 @@ CREATE TABLE sudac(
 	ime varchar(100) NOT NULL,
 	prezime varchar(100) NOT NULL,
     datum_rodenja DATETIME,
-    id_drzava INT NOT NULL,
     id_grad INT NOT NULL,
-    FOREIGN KEY (id_drzava) REFERENCES drzava(id),
     FOREIGN KEY (id_grad) REFERENCES grad(id)
 );
 
@@ -69,9 +63,7 @@ CREATE TABLE stadion(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	naziv VARCHAR(255) NOT NULL,
     kapacitet_gledatelja INT NOT NULL,
-	id_drzava INT NOT NULL,
     id_grad INT NOT NULL,
-    FOREIGN KEY (id_drzava) REFERENCES drzava(id),
     FOREIGN KEY (id_grad) REFERENCES grad(id)
 );
 
@@ -91,13 +83,9 @@ CREATE TABLE sesija(
 
 CREATE TABLE out_s( /* jer nemoze pisati OUT pa je out_s :D */
 	id_sesija INT NOT NULL,
-    id_tim1 INT NOT NULL,
-    id_tim2 INT NOT NULL,
+    id_tim INT NOT NULL,
     broj_outova INT DEFAULT 0,
-    CONSTRAINT CHK_tim12 CHECK ( id_tim1 != id_tim2 ),
-    FOREIGN KEY (id_tim1) REFERENCES tim(id),
-    FOREIGN KEY (id_tim2) REFERENCES tim(id)
-    
+    FOREIGN KEY (id_tim) REFERENCES tim(id)
 );
 
 CREATE TABLE gol(
@@ -138,35 +126,35 @@ VALUES
 ("Njemačka"),
 ("Francuska");
 
-INSERT INTO grad(ime) 
+INSERT INTO grad(ime, id_drzava) 
 VALUES
-("Zagreb"),
-("Beograd"),
-("Brasilia"),
-("Berlin"),
-("Paris");
+("Zagreb", 1),
+("Beograd", 2),
+("Brasilia", 3),
+("Berlin", 4),
+("Paris", 5);
 
 SELECT * FROM grad;
 SELECT * FROM drzava;
 SELECT * FROM tim;
-INSERT INTO tim(id, ime, kratica, id_drzava, id_grad) 
+INSERT INTO tim(id, ime, kratica, id_grad) 
 VALUES
-(1,"Dinamo", "DZG", 1, 1),
-(2, "Crvena Zvezda", "CZV", 2, 2),
-(3, "Sport Club Mangueira", "SCM", 3,3),
-(4, "Bayern", "FCB",4,4),
-(5, "Paris Saint-Germain","PSG", 5,5);
+(1,"Dinamo", "DZG", 1),
+(2, "Crvena Zvezda", "CZV", 2),
+(3, "Sport Club Mangueira", "SCM",3),
+(4, "Bayern", "FCB",4),
+(5, "Paris Saint-Germain","PSG", 5);
 
-INSERT INTO igrac(id, ime, prezime, datum_rodenja, id_drzava, id_grad, id_tim) VALUES
-(1, "Alen", "Valek", STR_TO_DATE('10.10.2000.', '%d.%m.%Y.'), 1, 1, 1),
-(2, "Maja", "Vrh", STR_TO_DATE('11.10.2000.', '%d.%m.%Y.'), 1, 1, 1),
-(3, "Matej", "Kurevija", STR_TO_DATE('12.10.2000.', '%d.%m.%Y.'), 2, 2, 2),
-(4, "Deni", "Vidan", STR_TO_DATE('14.10.2000.', '%d.%m.%Y.'), 2, 2, 2),
-(5, "Andrej", "Korica", STR_TO_DATE('15.10.2000.', '%d.%m.%Y.'), 3, 3, 3),
-(6, "Elena", "Ilic", STR_TO_DATE('18.10.2000.', '%d.%m.%Y.'), 4, 4, 4),
-(7, "David", "Sajina", STR_TO_DATE('19.10.2000.', '%d.%m.%Y.'), 4, 4, 4);
-INSERT INTO trener(id, ime, prezime, datum_rodenja, id_drzava, id_grad, id_tim) VALUES
-(8, "Trener", "Valek", STR_TO_DATE('10.10.2000.', '%d.%m.%Y.'), 1, 1, 1);
+INSERT INTO igrac(id, ime, prezime, datum_rodenja, id_grad, id_tim) VALUES
+(1, "Alen", "Valek", STR_TO_DATE('10.10.2000.', '%d.%m.%Y.'), 1, 1),
+(2, "Maja", "Vrh", STR_TO_DATE('11.10.2000.', '%d.%m.%Y.'),  1, 1),
+(3, "Matej", "Kurevija", STR_TO_DATE('12.10.2000.', '%d.%m.%Y.'), 2, 2),
+(4, "Deni", "Vidan", STR_TO_DATE('14.10.2000.', '%d.%m.%Y.'), 2, 2),
+(5, "Andrej", "Korica", STR_TO_DATE('15.10.2000.', '%d.%m.%Y.'), 3, 3),
+(6, "Elena", "Ilic", STR_TO_DATE('18.10.2000.', '%d.%m.%Y.'), 4, 4),
+(7, "David", "Sajina", STR_TO_DATE('19.10.2000.', '%d.%m.%Y.'), 4, 4);
+INSERT INTO trener(id, ime, prezime, datum_rodenja, id_grad, id_tim) VALUES
+(8, "Trener", "Valek", STR_TO_DATE('10.10.2000.', '%d.%m.%Y.'), 1, 1);
 
 Select ime from igrac;
 
@@ -242,6 +230,8 @@ SELECT i.id, i.ime, i.prezime, t.ime as tim, d.ime as drzava, g.ime as grad, tr.
  WHERE i.id_tim=1 /* umjesto 1 vanjska varijabla X */
  GROUP BY i.id;
  
+ INSERT INTO sudac(ime, prezime, datum_rodenja, id_grad) VALUES('Alen','Valek',STR_TO_DATE('21/12/1999', '%d/%m/%Y'), 1);
+ 
  drop function br_s;
  DELIMITER //
  CREATE FUNCTION br_s (  p_id_sudac INT) RETURNS INT
@@ -256,3 +246,5 @@ DETERMINISTIC
 END //
 DELIMITER ;
 SELECT br_s(4);
+
+SELECT * FROM tim;
