@@ -3,8 +3,8 @@
 <br/>
 VIEW - (0/7) 
 <br/>
-###PROCEDURE- (4/10) <br/>
-IMAMO => (IGRACI KOJI SU ZABILI GOL) <br/>
+### PROCEDURE- (4/10) <br/>
+IMAMO => <br/> (IGRACI KOJI SU ZABILI GOL) <br/>
 	  (IGRACI PO SESIJI KOJI SU ZABILI GOL) <br/>
 	  (POSTOTAK U GOL) <br/>
 	  (POSTOTAK U OKVIR) <br/>
