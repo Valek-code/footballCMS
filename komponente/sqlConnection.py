@@ -5,7 +5,7 @@ db = mysql.connector.connect(
     host="localhost",
     user="user", # user na koji se spaja
     auth_plugin='mysql_native_password', # don't touch prekidach
-    passwd="V#l3k698", # loznika vaseg user-a u database ( vrlo vjerojatno lozinka root user-a )
+    passwd="", # loznika vaseg user-a u database ( vrlo vjerojatno lozinka root user-a )
     db="projekt" # naziv sheme/baze
 )
 
