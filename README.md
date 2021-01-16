@@ -1,16 +1,16 @@
 # Football CMS
 ## ZA NAPRAVIT - OBAVEZNO
-
+<br/>
 VIEW - (0/7) 
-
-###PROCEDURE- (4/10) 
-IMAMO => (IGRACI KOJI SU ZABILI GOL)
-	  (IGRACI PO SESIJI KOJI SU ZABILI GOL)
-	  (POSTOTAK U GOL)
-	  (POSTOTAK U OKVIR)
-----------------------------------------------------------------
-IDEJA :
-	  (ISPISE IGRACE U PRVOM TIMU, DRUGOM)
-	  (ISPISUJE TRENERE U OBA TIMA)
-	  (PROSJECNO GODIŠTE IGRACA TIM-1 , TIM-2)
-	  (PROCEDURA KOJA ZAPISUJE SVE IGRACE KOJI SU ZABILI GOL)
+<br/>
+###PROCEDURE- (4/10) <br/>
+IMAMO => (IGRACI KOJI SU ZABILI GOL) <br/>
+	  (IGRACI PO SESIJI KOJI SU ZABILI GOL) <br/>
+	  (POSTOTAK U GOL) <br/>
+	  (POSTOTAK U OKVIR) <br/>
+---------------------------------------------------------------- <br/>
+IDEJA : <br/>
+	  (ISPISE IGRACE U PRVOM TIMU, DRUGOM) <br/>
+	  (ISPISUJE TRENERE U OBA TIMA) <br/>
+	  (PROSJECNO GODIŠTE IGRACA TIM-1 , TIM-2) <br/>
+	  (PROCEDURA KOJA ZAPISUJE SVE IGRACE KOJI SU ZABILI GOL) <br/>
