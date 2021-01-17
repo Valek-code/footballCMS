@@ -12,7 +12,7 @@ from komponente.alertWindows import *
 def traziStatisiku(sesija_id):
     pokaziStatistiku = Tk()
     pokaziStatistiku.title("Podaci o sesiji")
-    pokaziStatistiku.geometry("250x500")
+    pokaziStatistiku.geometry("250x250")
 
 
     cursor.execute(f"SELECT * FROM sesija WHERE id = {sesija_id}")
@@ -21,38 +21,60 @@ def traziStatisiku(sesija_id):
     label_id = Label(pokaziStatistiku, text=f"Podaci za sesiju [ID:{sesija_id}]")
     label_id.pack()
 
-    if not rezultati:
+    if not rezultati or rezultati == '':
         print('TRUE')
         test_label2 = Label(pokaziStatistiku, text='Nema podataka za ovu sesiju!', bg="white")
         test_label2.pack()
         return
-
     cursor.execute(f'SELECT COUNT(*) FROM gol WHERE id_tim = {rezultati[1]} AND id_sesija = {sesija_id}')
     golovi_tim1 = cursor.fetchone()
+
 
     cursor.execute(f'SELECT COUNT(*) FROM gol WHERE id_tim = {rezultati[2]} AND id_sesija = {sesija_id}')
     golovi_tim2 = cursor.fetchone()
 
-    cursor.execute(f'SELECT broj_outova FROM out_s WHERE id_tim1 = {rezultati[1]} AND id_sesija = {sesija_id}')
+
+    cursor.execute(f'SELECT ime FROM tim WHERE id = {rezultati[1]} ')
+    ime_tim1 = cursor.fetchone()
+
+    cursor.execute(f'SELECT ime FROM tim WHERE id = {rezultati[2]} ')
+    ime_tim2 = cursor.fetchone()
+
+
+    cursor.execute(f'SELECT IFNULL(SUM(broj_outova),0) FROM out_s JOIN sesija s ON {sesija_id} = s.id AND id_tim = s.id_tim1')
     outevi_tim1 = cursor.fetchone()
 
-    cursor.execute(f'SELECT broj_outova FROM out_s WHERE id_tim1 = {rezultati[1]} AND id_sesija = {sesija_id}')
+    outT1 = outevi_tim1[0]
+
+    cursor.execute(f'SELECT IFNULL(SUM(broj_outova),0) FROM out_s JOIN sesija s ON {sesija_id} = s.id AND id_tim = s.id_tim2')
     outevi_tim2 = cursor.fetchone()
 
-    cursor.execute(f'SELECT ukupno FROM udarci WHERE id_tim = {rezultati[1]} AND id_sesija = {sesija_id}')
+    outT2 = outevi_tim2[0]
+
+    cursor.execute(f'SELECT IFNULL(SUM(ukupno),0) FROM udarci WHERE id_tim = {rezultati[1]} AND id_sesija = {sesija_id}')
     udarci_tim1 = cursor.fetchone()
 
-    cursor.execute(f'SELECT ukupno FROM udarci WHERE id_tim = {rezultati[2]} AND id_sesija = {sesija_id}')
+    uT1 = udarci_tim1[0]
+
+    cursor.execute(f'SELECT IFNULL(SUM(ukupno),0) FROM udarci WHERE id_tim = {rezultati[2]} AND id_sesija = {sesija_id}')
     udarci_tim2 = cursor.fetchone()
 
-    cursor.execute(f'SELECT COUNT(*) FROM kazne WHERE id_tim = {rezultati[1]} AND id_sesija = {sesija_id}')
+    cursor.execute(f'SELECT IFNULL(SUM(u_okvir),0) FROM udarci WHERE id_tim = {rezultati[1]} AND id_sesija = {sesija_id}')
+    udarci_okvir_tim1 = cursor.fetchone()
+
+    cursor.execute(f'SELECT IFNULL(SUM(u_okvir),0) FROM udarci WHERE id_tim = {rezultati[2]} AND id_sesija = {sesija_id}')
+    udarci_okvir_tim2 = cursor.fetchone()
+
+    cursor.execute(f'SELECT IFNULL(COUNT(id_igrac),0) FROM kazne WHERE id_tim = {rezultati[1]} AND id_sesija = {sesija_id}')
     kazne_tim1 = cursor.fetchone()
 
-    cursor.execute(f'SELECT COUNT(*) FROM kazne WHERE id_tim = {rezultati[2]} AND id_sesija = {sesija_id}')
+    cursor.execute(f'SELECT IFNULL(COUNT(id_igrac),0) FROM kazne WHERE id_tim = {rezultati[2]} AND id_sesija = {sesija_id}')
     kazne_tim2 = cursor.fetchone()
 
+
+    uT2 = udarci_tim2[0] or 0
+
     for index in range(1):
-        print('FALSE')
-        test_label = Label(pokaziStatistiku, text=f" Tim1 ID: {rezultati[1]} \n Tim2 ID: {rezultati[2]} \n Golovi: TIM1[ {golovi_tim1[0]} ] - TIM2[ {golovi_tim2[0]} ] \n Outs: TIM1[ {outevi_tim1[0]} ] - TIM2[ {outevi_tim2[0]} ] \n Udarci: TIM1[ {udarci_tim1[0]} ] - TIM2[ {udarci_tim2[0]} ] \n Kazne : TIM1[ {kazne_tim1[0]} ] - TIM2[ {kazne_tim2[0]} ] \n ", bg="white")
+        test_label = Label(pokaziStatistiku, text=f" Tim1 : {ime_tim1[0]} \n Tim2 : {ime_tim2[0]} \n Golovi: TIM1[ {golovi_tim1[0]} ] - TIM2[ {golovi_tim2[0]} ] \n Outevi: TIM1[ {outT1} ] - TIM2[ {outT2} ] \n Udarci: TIM1[ {uT1}({udarci_okvir_tim1[0]}) ] - TIM2[ {udarci_tim2[0]}({udarci_okvir_tim1[0]}) ] \n Kazne : TIM1[ {kazne_tim1[0]} ] - Tim2 [ {kazne_tim2[0]} ]", bg="white")
         test_label.pack()
 

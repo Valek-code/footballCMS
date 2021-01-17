@@ -27,12 +27,18 @@ def pokaziIgrace():
 def dodajIgrace():
 
     def igracToDb(ime, prezime, datum_rodenja, grad, tim):
-        cursor.execute(f"""INSERT INTO igrac(ime,prezime,datum_rodenja, id_grad, id_tim) 
-                                VALUES("{ime}","{prezime}",str_to_date('{datum_rodenja}','%d/%m/%Y'), {grad}, {tim})""")
-        db.commit()
-        clear()
-        alertWindow(f'Uspješno dodan "{ime} {prezime}" u bazu podataka')
-
+        try:
+            cursor.execute(f"""INSERT INTO igrac(ime,prezime,datum_rodenja, id_grad, id_tim) 
+                                    VALUES("{ime}","{prezime}",str_to_date('{datum_rodenja}','%d/%m/%Y'), {grad}, {tim})""")
+            db.commit()
+            clear()
+            alertWindow(f'Uspješno dodan "{ime} {prezime}" u bazu podataka')
+        except Exception:
+            alertWindow(f'{Exception}')
+            return
+        else:
+            alertWindow('Something went wrong')
+            return
     def clear():
         entry_ime.delete(0, END)
         entry_prezime.delete(0, END)
