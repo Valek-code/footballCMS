@@ -28,17 +28,19 @@ def dodajIgrace():
 
     def igracToDb(ime, prezime, datum_rodenja, grad, tim):
         try:
+            if not datum_rodenja or datum_rodenja == '':
+                alertWindow('Trebate upisati datum rodenja')
+                return
+            
             cursor.execute(f"""INSERT INTO igrac(ime,prezime,datum_rodenja, id_grad, id_tim) 
                                     VALUES("{ime}","{prezime}",str_to_date('{datum_rodenja}','%d/%m/%Y'), {grad}, {tim})""")
             db.commit()
             clear()
             alertWindow(f'Uspješno dodan "{ime} {prezime}" u bazu podataka')
-        except Exception:
-            alertWindow(f'{Exception}')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
             return
-        else:
-            alertWindow('Something went wrong')
-            return
+
     def clear():
         entry_ime.delete(0, END)
         entry_prezime.delete(0, END)
@@ -104,10 +106,18 @@ def dodajIgrace():
 def deleteIgracEntry():
 
     def deleteIgrac():
-        izbor = lista_igraca.get(lista_igraca.curselection())
-        cursor.execute(f"DELETE FROM igrac WHERE id = '{izbor}'")
-        db.commit()
-        alertWindow(f"Igrac [ID:{izbor}] uspjesno izbrisan!")
+        try:
+            izbor = lista_igraca.get(lista_igraca.curselection())
+            izbor_p = getIDnumFromString(izbor)
+            cursor.execute(f"DELETE FROM igrac WHERE id = '{izbor_p}'")
+            db.commit()
+            alertWindow(f"Igrac [ID:{izbor_p}] uspjesno izbrisan!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    def getIDnumFromString(string):
+        num = int(''.join(filter(str.isdigit, f'{string}')))
+        return num
 
     deleteIgracWin = Tk()
     deleteIgracWin.title("Brisanje Igraca")
@@ -122,7 +132,7 @@ def deleteIgracEntry():
 
     # puni se selekcija za brisanje igraca
     for x in rezultati:
-        lista_igraca.insert(END, f"{x[0]}")
+        lista_igraca.insert(END, f"ID:[{x[0]}] {x[1]} {x[2]}")
 
     brisiGumb = Button(deleteIgracWin, text="Izbrisi", pady=5, command=deleteIgrac)
     brisiGumb.pack()

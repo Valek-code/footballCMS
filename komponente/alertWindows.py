@@ -6,7 +6,7 @@ from tkinter import ttk
 def alertWindow(_text):
     Alert_Win = Tk()
     Alert_Win.title("Alert")
-    Alert_Win.geometry("350x100")
+    Alert_Win.geometry("500x100")
 
     _label = Label(Alert_Win, text=f"{_text}")
     _label.pack()

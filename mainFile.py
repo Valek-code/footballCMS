@@ -52,19 +52,22 @@ frame12.pack(fill="both", expand=1)
 frame13.pack(fill="both", expand=1)
 
 # ATRIBUTI FRAME-ova
-my_notebook.add(frame6, text="Igraci")
-my_notebook.add(frame4, text="Treneri")
-my_notebook.add(frame3, text="Stadion")
-my_notebook.add(frame8, text="Sesije")
-my_notebook.add(frame7, text="Sudci")
-my_notebook.add(frame5, text="Timovi")
 my_notebook.add(frame, text="Drzave")
 my_notebook.add(frame2, text="Gradovi")
+my_notebook.add(frame3, text="Stadion")
+my_notebook.add(frame4, text="Treneri")
+my_notebook.add(frame5, text="Timovi")
+my_notebook.add(frame6, text="Igraci")
+my_notebook.add(frame7, text="Sudci")
+my_notebook.add(frame8, text="Sesije")
 my_notebook.add(frame9, text="Gol")
 my_notebook.add(frame10, text="Out")
 my_notebook.add(frame11, text="Udarac")
 my_notebook.add(frame12, text="Statistika")
 my_notebook.add(frame13, text="Extra")
+
+
+
 
 test_label = Label(frame5, text="No records to show", bg="white")
 

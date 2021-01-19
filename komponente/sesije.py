@@ -30,10 +30,17 @@ def pokaziSesije():
 def dodajSesiju():
 
     def sesijaToDb(tim1_id, tim2_id, id_sudac, id_stadion, datumSesije):
-        cursor.execute(f"""INSERT INTO sesija(id_tim1,id_tim2,id_sudac,id_stadion,datum_sesija) 
-                                VALUES({tim1_id},{tim2_id},{id_sudac},{id_stadion},STR_TO_DATE('{datumSesije}','%d/%m/%Y'))""")
-        db.commit()
-        alertWindow(f'Nova sesija uspješno kreirana..')
+        try:
+            if not datumSesije or datumSesije == '':
+                alertWindow('Morate upisati datum sesije')
+                return
+
+            cursor.execute(f"""INSERT INTO sesija(id_tim1,id_tim2,id_sudac,id_stadion,datum_sesija) 
+                                    VALUES({tim1_id},{tim2_id},{id_sudac},{id_stadion},STR_TO_DATE('{datumSesije}','%d/%m/%Y %H:%i'))""")
+            db.commit()
+            alertWindow(f'Nova sesija uspješno kreirana..')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     def dobiIDtima():
         izbor = lista_timova1.get(lista_timova1.curselection())
@@ -83,7 +90,7 @@ def dodajSesiju():
     lista_sudaca = Listbox(dodaj_sesiju, exportselection=0)
     lista_sudaca.grid(row=3, column=1)
 
-    label_datum = Label(dodaj_sesiju, text="Datum(dd/mm/yyyy): ")
+    label_datum = Label(dodaj_sesiju, text="Datum(dd/mm/yyyy HH:MIN): ")
     label_datum.grid(row=4, column=0)
 
     entry_datum = Entry(dodaj_sesiju)
@@ -103,10 +110,13 @@ def dodajSesiju():
 def deleteSesijaEntry():
 
     def deleteSesija():
-        izbor = lista_sesija.get(lista_sesija.curselection())
-        cursor.execute(f"DELETE FROM sesija WHERE id = '{izbor}'")
-        db.commit()
-        alertWindow(f"Sesija {izbor} uspjesno izbrisan!")
+        try:
+            izbor = lista_sesija.get(lista_sesija.curselection())
+            cursor.execute(f"DELETE FROM sesija WHERE id = '{izbor}'")
+            db.commit()
+            alertWindow(f"Sesija {izbor} uspjesno izbrisan!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     deleteSesijaWin = Tk()
     deleteSesijaWin.title("Brisanje Sesija")

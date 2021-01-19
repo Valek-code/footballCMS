@@ -34,11 +34,17 @@ def dodajGolove(sesija_id):
 
 
     def golToDb(id_sesije, id_tim, id_igrac, vrijeme):
-        cursor.execute(f"""INSERT INTO gol(id_sesija, id_tim, id_igrac, vrijeme) 
-                                VALUES({id_sesije},{id_tim},{id_igrac}, STR_TO_DATE('{vrijeme}','%d/%m/%Y %H:%i'))""")
-        db.commit()
-        alertWindow(f"Gol uspjesno dodan u bazu podataka!")
+        try:
+            if not vrijeme or vrijeme == '':
+                alertWindow('Morate upisati vrijeme gola')
+                return
 
+            cursor.execute(f"""INSERT INTO gol(id_sesija, id_tim, id_igrac, vrijeme) 
+                                    VALUES({id_sesije},{id_tim},{id_igrac}, STR_TO_DATE('{vrijeme}','%d/%m/%Y %H:%i'))""")
+            db.commit()
+            alertWindow(f"Gol uspjesno dodan u bazu podataka!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     def getTimIDFromIgracID(id_igrac):
         cursor.execute(f'SELECT id_tim FROM igrac WHERE id = {id_igrac}')
@@ -99,10 +105,13 @@ def prikaziSveGolovePoSesiji(sesija_id):
 def deleteGolEntry(sesija_id):
 
     def deleteGol():
-        izbor = lista_golova.get(lista_golova.curselection())
-        cursor.execute(f"DELETE FROM gol WHERE vrijeme = '{izbor}'")
-        db.commit()
-        alertWindow(f"Gol [TIMESTAMP:{izbor}] uspjesno izbrisan!")
+        try:
+            izbor = lista_golova.get(lista_golova.curselection())
+            cursor.execute(f"DELETE FROM gol WHERE vrijeme = '{izbor}'")
+            db.commit()
+            alertWindow(f"Gol [TIMESTAMP:{izbor}] uspjesno izbrisan!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     deleteGoalWin = Tk()
     deleteGoalWin.title("Brisanje golova")

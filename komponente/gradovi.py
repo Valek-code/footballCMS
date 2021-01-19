@@ -28,11 +28,14 @@ def pokaziGradove():
 def dodajGradove():
 
     def gradToDb(ime):
-        cursor.execute(f"""INSERT INTO grad(ime, id_drzava) 
-                                VALUES("{ime}")""")
-        db.commit()
-        clear()
-        alertWindow(f"Grad {ime} uspjesno dodan u bazu podataka!")
+        try:
+            cursor.execute(f"""INSERT INTO grad(ime, id_drzava) 
+                                    VALUES("{ime}")""")
+            db.commit()
+            clear()
+            alertWindow(f"Grad {ime} uspjesno dodan u bazu podataka!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     def clear():
         entry_ime.delete(0, END)
@@ -63,10 +66,14 @@ def dodajGradove():
 def deleteGradEntry():
 
     def deleteGrad():
-        izbor = lista_gradova.get(lista_gradova.curselection())
-        cursor.execute(f"DELETE FROM grad WHERE id = '{izbor}'")
-        db.commit()
-        alertWindow(f"Grad [ID:{izbor}] uspjesno izbrisan!")
+
+        try:
+            izbor = lista_gradova.get(lista_gradova.curselection())
+            cursor.execute(f"DELETE FROM grad WHERE ime = '{izbor}'")
+            db.commit()
+            alertWindow(f"Grad [ID:{izbor}] uspjesno izbrisan!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške: {e}')
 
     deleteGradWin = Tk()
     deleteGradWin.title("Brisanje gradova")
@@ -83,7 +90,7 @@ def deleteGradEntry():
     label_upozorenje.pack()
 
     for x in rezultati:
-        lista_gradova.insert(END, f"{x[0]}")
+        lista_gradova.insert(END, f"{x[1]}")
 
     brisiGumb = Button(deleteGradWin, text="Izbrisi", pady=5, command=deleteGrad)
     brisiGumb.pack()

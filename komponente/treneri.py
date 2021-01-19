@@ -27,12 +27,18 @@ def pokaziTrenere():
 def dodajTrenera():
 
     def trenerToDb(ime, prezime, datum_rodenja, grad, tim):
-        cursor.execute(f"""INSERT INTO trener(ime,prezime,datum_rodenja, id_grad, id_tim) 
-                                VALUES("{ime}","{prezime}",str_to_date('{datum_rodenja}','%d/%m/%Y'), {grad}, {tim})""")
-        db.commit()
-        clear()
-        alertWindow(f'Uspješno dodan "{ime} {prezime}" u bazu podataka')
+        try:
+            if not datum_rodenja or datum_rodenja == '':
+                alertWindow('Potrebno je upisati datum rodenja')
+                return
 
+            cursor.execute(f"""INSERT INTO trener(ime,prezime,datum_rodenja, id_grad, id_tim) 
+                                    VALUES("{ime}","{prezime}",str_to_date('{datum_rodenja}','%d/%m/%Y'), {grad}, {tim})""")
+            db.commit()
+            clear()
+            alertWindow(f'Uspješno dodan "{ime} {prezime}" u bazu podataka')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
     def clear():
         entry_ime.delete(0, END)
         entry_prezime.delete(0, END)
@@ -100,10 +106,18 @@ def dodajTrenera():
 def deleteTrenerEntry():
 
     def deleteTrener():
-        izbor = lista_trenera.get(lista_sudaca.curselection())
-        cursor.execute(f"DELETE FROM trener WHERE id = '{izbor}'")
-        db.commit()
-        alertWindow(f"Trener ID:[{izbor}] uspjesno izbrisan!")
+        try:
+            izbor = lista_trenera.get(lista_sudaca.curselection())
+            izbor_p = getIDnumFromString(izbor)
+            cursor.execute(f"DELETE FROM trener WHERE id = '{izbor}'")
+            db.commit()
+            alertWindow(f"Trener ID:[{izbor}] uspjesno izbrisan!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    def getIDnumFromString(string):
+        num = int(''.join(filter(str.isdigit, f'{string}')))
+        return num
 
     deleteSudacWin = Tk()
     deleteSudacWin.title("Brisanje Trenera")
@@ -118,7 +132,7 @@ def deleteTrenerEntry():
 
     # puni se selekcija za brisanje trenera
     for x in rezultati:
-        lista_trenera.insert(END, f"{x[0]}")
+        lista_trenera.insert(END, f"[ID:{x[0]}] {x[1]} {x[2]}")
 
     brisiGumb = Button(deleteSudacWin, text="Izbrisi", pady=5, command=deleteTrener)
     brisiGumb.pack()

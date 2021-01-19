@@ -28,11 +28,17 @@ def pokaziStadione():
 def dodajStadione():
 
     def stadionToDb(naziv, kapacitet, id_grad):
-        cursor.execute(f"""INSERT INTO stadion(naziv, kapacitet_gledatelja, id_grad) 
-                                VALUES("{naziv}",{kapacitet},{id_grad})""")
-        db.commit()
-        clear()
-        alertWindow(f"Stadion {ime} uspjesno dodan u bazu podataka!")
+        try:
+            if not kapacitet or kapacitet == '':
+                alertWindow('Kapacitet mora biti naznačen')
+                return
+            cursor.execute(f"""INSERT INTO stadion(naziv, kapacitet_gledatelja, id_grad) 
+                                    VALUES("{naziv}",{kapacitet},{id_grad})""")
+            db.commit()
+            clear()
+            alertWindow(f"Stadion {ime} uspjesno dodan u bazu podataka!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     def clear():
         entry_ime.delete(0, END)
@@ -75,10 +81,18 @@ def dodajStadione():
 def deleteStadionEntry():
 
     def deleteStadion():
-        izbor = lista_gradova.get(lista_gradova.curselection())
-        cursor.execute(f"DELETE FROM grad WHERE id = '{izbor}'")
-        db.commit()
-        alertWindow(f"Grad [ID:{izbor}] uspjesno izbrisan!")
+        try:
+            izbor = lista_gradova.get(lista_gradova.curselection())
+            izbor_p = getIDnumFromString(izbor)
+            cursor.execute(f"DELETE FROM stadion WHERE id = '{izbor_p}'")
+            db.commit()
+            alertWindow(f"Grad [ID:{izbor_p}] uspjesno izbrisan!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    def getIDnumFromString(string):
+        num = int(''.join(filter(str.isdigit, f'{string}')))
+        return num
 
     deleteStadionWin = Tk()
     deleteStadionWin.title("Brisanje stadiona")
@@ -95,7 +109,7 @@ def deleteStadionEntry():
     label_upozorenje.pack()
 
     for x in rezultati:
-        lista_stadiona.insert(END, f"{x[0]}")
+        lista_stadiona.insert(END, f"[ID:{x[0]}] {x[1]}")
 
     brisiGumb = Button(deleteStadionWin, text="Izbrisi", pady=5, command=deleteStadion)
     brisiGumb.pack()

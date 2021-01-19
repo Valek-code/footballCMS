@@ -12,7 +12,7 @@ from komponente.alertWindows import *
 def traziStatisiku(sesija_id):
     pokaziStatistiku = Tk()
     pokaziStatistiku.title("Podaci o sesiji")
-    pokaziStatistiku.geometry("250x250")
+    pokaziStatistiku.geometry("300x300")
 
 
     cursor.execute(f"SELECT * FROM sesija WHERE id = {sesija_id}")
@@ -72,9 +72,33 @@ def traziStatisiku(sesija_id):
     kazne_tim2 = cursor.fetchone()
 
 
+
+
     uT2 = udarci_tim2[0] or 0
 
     for index in range(1):
         test_label = Label(pokaziStatistiku, text=f" Tim1 : {ime_tim1[0]} \n Tim2 : {ime_tim2[0]} \n Golovi: TIM1[ {golovi_tim1[0]} ] - TIM2[ {golovi_tim2[0]} ] \n Outevi: TIM1[ {outT1} ] - TIM2[ {outT2} ] \n Udarci: TIM1[ {uT1}({udarci_okvir_tim1[0]}) ] - TIM2[ {udarci_tim2[0]}({udarci_okvir_tim1[0]}) ] \n Kazne : TIM1[ {kazne_tim1[0]} ] - Tim2 [ {kazne_tim2[0]} ]", bg="white")
         test_label.pack()
 
+
+    cursor.execute(f'''
+        SELECT t.ime ime_tima,CONCAT(i.ime,' ', i.prezime) as 'Igrac', g.vrijeme FROM sesija s
+		JOIN tim t ON t.id = s.id_tim1
+		JOIN igrac i ON i.id_tim = t.id
+        JOIN gol g ON i.id = g.id_igrac
+		WHERE s.id = {sesija_id}
+	UNION
+	SELECT t.ime ime_tima,CONCAT(i.ime,' ', i.prezime) as 'Igrac', g.vrijeme FROM sesija s
+		JOIN tim t ON t.id = s.id_tim2
+		JOIN igrac i ON i.id_tim = t.id
+        JOIN gol g ON i.id = g.id_igrac
+		WHERE s.id = {sesija_id};
+    
+    ''')
+
+    test_label3 = Label(pokaziStatistiku, text=f'GOLOVI: ')
+    test_label3.pack()
+    rezultati = cursor.fetchall()
+    for rezultat in rezultati:
+        test_label2 = Label(pokaziStatistiku, text=f'[{rezultat[2]}] - {rezultat[1]} - {rezultat[0]} ',bg='white')
+        test_label2.pack()

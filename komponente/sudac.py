@@ -27,11 +27,18 @@ def pokaziSudce():
 def dodajSudca():
 
     def sudacToDb(ime, prezime, datum_rodenja,grad):
-        cursor.execute(f"""INSERT INTO sudac(ime,prezime,datum_rodenja, id_grad) 
-                                VALUES("{ime}","{prezime}",str_to_date('{datum_rodenja}','%d/%m/%Y'), {grad})""")
-        db.commit()
-        clear()
-        alertWindow(f'Uspješno dodan "{ime} {prezime}" u bazu podataka')
+        try:
+            if not datum_rodenja or datum_rodenja == '':
+                alertWindow('Potreno je upisati datum rodenja')
+                return
+
+            cursor.execute(f"""INSERT INTO sudac(ime,prezime,datum_rodenja, id_grad) 
+                                    VALUES("{ime}","{prezime}",str_to_date('{datum_rodenja}','%d/%m/%Y'), {grad})""")
+            db.commit()
+            clear()
+            alertWindow(f'Uspješno dodan "{ime} {prezime}" u bazu podataka')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     def clear():
         entry_ime.delete(0, END)
@@ -85,10 +92,17 @@ def dodajSudca():
 def deleteSudacEntry():
 
     def deleteSudac():
-        izbor = lista_sudaca.get(lista_sudaca.curselection())
-        cursor.execute(f"DELETE FROM sudac WHERE id = '{izbor}'")
-        db.commit()
-        alertWindow(f"Sudac [ID:{izbor}] uspjesno izbrisan!")
+        try:
+            izbor = lista_sudaca.get(lista_sudaca.curselection())
+            izbor_p = getIDnumFromString(izbor)
+            cursor.execute(f"DELETE FROM sudac WHERE id = '{izbor_p}'")
+            db.commit()
+            alertWindow(f"Sudac [ID:{izbor_p}] uspjesno izbrisan!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+    def getIDnumFromString(string):
+        num = int(''.join(filter(str.isdigit, f'{string}')))
+        return num
 
     deleteSudacWin = Tk()
     deleteSudacWin.title("Brisanje Sudaca")
@@ -103,7 +117,7 @@ def deleteSudacEntry():
 
     # puni se selekcija za brisanje sudaca
     for x in rezultati:
-        lista_sudaca.insert(END, f"{x[0]}")
+        lista_sudaca.insert(END, f"ID:[{x[0]}] {x[1]} {x[2]}")
 
     brisiGumb = Button(deleteSudacWin, text="Izbrisi", pady=5, command=deleteSudac)
     brisiGumb.pack()

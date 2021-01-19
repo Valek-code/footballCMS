@@ -27,10 +27,13 @@ def showTeams():
 def deleteTeamEntry():
 
     def deleteTeam():
-        izbor = lista_timova.get(lista_timova.curselection())
-        cursor.execute(f"DELETE FROM tim WHERE ime = '{izbor}'")
-        db.commit()
-        alertWindow(f"Tim {izbor} uspjesno izbrisan!")
+        try:
+            izbor = lista_timova.get(lista_timova.curselection())
+            cursor.execute(f"DELETE FROM tim WHERE ime = '{izbor}'")
+            db.commit()
+            alertWindow(f"Tim {izbor} uspjesno izbrisan!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     deleteTeamWin = Tk()
     deleteTeamWin.title("Brisanje Tima")
@@ -56,16 +59,15 @@ def deleteTeamEntry():
 
 # dodaje Tim koji puni korisnik sucelja custom podacima
 def dodajTim():
-
     def timToDb(ime, kratica, grad):
-
-
-        cursor.execute(f"""INSERT INTO tim(ime,kratica,id_grad) 
-                                VALUES("{ime}","{kratica}",{grad})""")
-        db.commit()
-        clear()
-        alertWindow(f'Uspješno dodan "{ime}" u bazu podataka')
-
+        try:
+            cursor.execute(f"""INSERT INTO tim(ime,kratica,id_grad) 
+                                    VALUES("{ime}","{kratica}",{grad})""")
+            db.commit()
+            clear()
+            alertWindow(f'Uspješno dodan "{ime}" u bazu podataka')
+        except Exception as e:
+            alertWindow(f'Došlo je do grešske [{e}] ')
     def clear():
         entry_ime.delete(0, END)
         entry_kratica.delete(0, END)

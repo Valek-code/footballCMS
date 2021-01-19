@@ -34,11 +34,13 @@ def dodajUdarce(sesija_id):
 
 
     def udarciUdb(id_sesije, id_tim, id_igrac, ukupno, u_okvir):
-        cursor.execute(f"""INSERT INTO udarci(id_sesija, id_tim, id_igrac, ukupno, u_okvir) 
-                                VALUES({id_sesije},{id_tim},{id_igrac},{ukupno},{u_okvir})""")
-        db.commit()
-        alertWindow(f"Udarci uspjesno dodani u bazu podataka!")
-
+        try:
+            cursor.execute(f"""INSERT INTO udarci(id_sesija, id_tim, id_igrac, ukupno, u_okvir) 
+                                    VALUES({id_sesije},{id_tim},{id_igrac},{ukupno},{u_okvir})""")
+            db.commit()
+            alertWindow(f"Udarci uspjesno dodani u bazu podataka!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     def getTimIDFromIgracID(id_igrac):
         cursor.execute(f'SELECT id_tim FROM igrac WHERE id = {id_igrac}')

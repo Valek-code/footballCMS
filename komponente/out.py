@@ -34,11 +34,13 @@ def dodajOut(sesija_id):
 
 
     def outUDB(id_sesije, id_tim, id_igrac, broj_outova):
-        cursor.execute(f"""INSERT INTO out_s(id_sesija, id_tim, id_igrac, broj_outova)
-                                VALUES({id_sesije},{id_tim},{id_igrac},{broj_outova})""")
-        db.commit()
-        alertWindow(f"Outevi uspjesno dodani u bazu podataka!")
-
+        try:
+            cursor.execute(f"""INSERT INTO out_s(id_sesija, id_tim, id_igrac, broj_outova)
+                                    VALUES({id_sesije},{id_tim},{id_igrac},{broj_outova})""")
+            db.commit()
+            alertWindow(f"Outevi uspjesno dodani u bazu podataka!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     def getTimIDFromIgracID(id_igrac):
         cursor.execute(f'SELECT id_tim FROM igrac WHERE id = {id_igrac}')
@@ -109,11 +111,14 @@ def deleteOuteviEntry(sesija_id):
 
 
     def deleteOutevi():
-        full_string = lista_outova.get(lista_outova.curselection())
-        izbor = getIDnumFromString(lista_outova.get(lista_outova.curselection()))
-        cursor.execute(f"DELETE FROM out_s WHERE id_igrac = '{izbor}'")
-        db.commit()
-        alertWindow(f"Outovi igraca {full_string} uspjesno izbrisan!")
+        try:
+            full_string = lista_outova.get(lista_outova.curselection())
+            izbor = getIDnumFromString(lista_outova.get(lista_outova.curselection()))
+            cursor.execute(f"DELETE FROM out_s WHERE id_igrac = '{izbor}'")
+            db.commit()
+            alertWindow(f"Outovi igraca {full_string} uspjesno izbrisan!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     deleteOutWin = Tk()
     deleteOutWin.title("Brisanje outeva")
