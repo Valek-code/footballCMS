@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter import ttk
 import mysql.connector
+from datetime import datetime
 
 from komponente.sqlConnection import *
 from komponente.selekcije import *
@@ -34,17 +35,16 @@ def dodajGolove(sesija_id):
 
 
     def golToDb(id_sesije, id_tim, id_igrac, vrijeme):
-        try:
-            if not vrijeme or vrijeme == '':
-                alertWindow('Morate upisati vrijeme gola')
-                return
 
-            cursor.execute(f"""INSERT INTO gol(id_sesija, id_tim, id_igrac, vrijeme) 
-                                    VALUES({id_sesije},{id_tim},{id_igrac}, STR_TO_DATE('{vrijeme}','%d/%m/%Y %H:%i'))""")
-            db.commit()
-            alertWindow(f"Gol uspjesno dodan u bazu podataka!")
-        except Exception as e:
-            alertWindow(f'Došlo je do greške [{e}]')
+        if not vrijeme or vrijeme == '':
+            alertWindow('Morate upisati vrijeme gola')
+            return
+
+        cursor.execute(f"""INSERT INTO gol(id_sesija, id_tim, id_igrac, vrijeme) 
+                                VALUES({id_sesije},{id_tim},{id_igrac}, STR_TO_DATE('{vrijeme}')""")
+        db.commit()
+        alertWindow(f"Gol uspjesno dodan u bazu podataka!")
+
 
     def getTimIDFromIgracID(id_igrac):
         cursor.execute(f'SELECT id_tim FROM igrac WHERE id = {id_igrac}')
@@ -55,13 +55,14 @@ def dodajGolove(sesija_id):
         num = int(''.join(filter(str.isdigit, f'{string}')))
         return num
 
+
     label_igraci = Label(dodaj_gol, text="Igraci: ")
     label_igraci.grid(row=2, column=0)
 
     lista_igraca = Listbox(dodaj_gol, exportselection=0, width=50 )
     lista_igraca.grid(row=2, column=1)
 
-    label_vrijeme = Label(dodaj_gol, text="Vrijeme gola(dd/mm/yyyy hh:mi):")
+    label_vrijeme = Label(dodaj_gol, text="Vrijeme gola(Minuta):")
     label_vrijeme.grid(row=3, column=0)
 
     entry_vrijeme = Entry(dodaj_gol)

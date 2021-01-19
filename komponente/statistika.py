@@ -21,6 +21,11 @@ def traziStatisiku(sesija_id):
     label_id = Label(pokaziStatistiku, text=f"Podaci za sesiju [ID:{sesija_id}]")
     label_id.pack()
 
+    if not sesija_id or sesija_id == '':
+        label_id2 = Label(pokaziStatistiku, text=f"Podaci za sesiju ne postoje")
+        label_id2.pack()
+        return
+
     if not rezultati or rezultati == '':
         print('TRUE')
         test_label2 = Label(pokaziStatistiku, text='Nema podataka za ovu sesiju!', bg="white")
@@ -82,13 +87,13 @@ def traziStatisiku(sesija_id):
 
 
     cursor.execute(f'''
-        SELECT t.ime ime_tima,CONCAT(i.ime,' ', i.prezime) as 'Igrac', g.vrijeme FROM sesija s
+        SELECT t.ime ime_tima,CONCAT(i.ime,' ', i.prezime) as 'Igrac', TIMESTAMPDIFF(MINUTE, g.vrijeme, s.datum_sesija) * -1 as vrijeme FROM sesija s
 		JOIN tim t ON t.id = s.id_tim1
 		JOIN igrac i ON i.id_tim = t.id
         JOIN gol g ON i.id = g.id_igrac
 		WHERE s.id = {sesija_id}
 	UNION
-	SELECT t.ime ime_tima,CONCAT(i.ime,' ', i.prezime) as 'Igrac', g.vrijeme FROM sesija s
+	SELECT t.ime ime_tima,CONCAT(i.ime,' ', i.prezime) as 'Igrac', TIMESTAMPDIFF(MINUTE, g.vrijeme, s.datum_sesija) * -1 as vrijeme FROM sesija s
 		JOIN tim t ON t.id = s.id_tim2
 		JOIN igrac i ON i.id_tim = t.id
         JOIN gol g ON i.id = g.id_igrac
@@ -100,5 +105,5 @@ def traziStatisiku(sesija_id):
     test_label3.pack()
     rezultati = cursor.fetchall()
     for rezultat in rezultati:
-        test_label2 = Label(pokaziStatistiku, text=f'[{rezultat[2]}] - {rezultat[1]} - {rezultat[0]} ',bg='white')
+        test_label2 = Label(pokaziStatistiku, text=f"[{+int(rezultat[2])}'] - {rezultat[1]} - {rezultat[0]} ",bg='white')
         test_label2.pack()

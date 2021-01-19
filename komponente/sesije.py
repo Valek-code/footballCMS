@@ -112,26 +112,36 @@ def deleteSesijaEntry():
     def deleteSesija():
         try:
             izbor = lista_sesija.get(lista_sesija.curselection())
-            cursor.execute(f"DELETE FROM sesija WHERE id = '{izbor}'")
+            izbor_p = getIDnumFromString(izbor)
+            cursor.execute(f"DELETE FROM sesija WHERE id = '{izbor_p}'")
             db.commit()
-            alertWindow(f"Sesija {izbor} uspjesno izbrisan!")
+            alertWindow(f"Sesija {izbor_p} uspjesno izbrisan!")
         except Exception as e:
             alertWindow(f'Došlo je do greške [{e}]')
+
+    def getIDnumFromString(string):
+        num = int(''.join(filter(str.isdigit, f'{string}')))
+        return num
 
     deleteSesijaWin = Tk()
     deleteSesijaWin.title("Brisanje Sesija")
     deleteSesijaWin.geometry("250x500")
 
-    cursor.execute("SELECT * FROM sesija")
+    cursor.execute(
+"""
+SELECT s.id,t.ime,t2.ime FROM SESIJA s
+JOIN tim t ON t.id = s.id_tim1
+JOIN tim t2 ON t2.id = s.id_tim2;
+""")
     rezultati = cursor.fetchall()
 
     # generiranje liste koja cuva podatke o sesijama
-    lista_sesija = Listbox(deleteSesijaWin, exportselection=0)
+    lista_sesija = Listbox(deleteSesijaWin, exportselection=0, width=50)
     lista_sesija.pack()
 
     # puni se selekcija za brisanje sesija
     for x in rezultati:
-        lista_sesija.insert(END, f"{x[0]}")
+        lista_sesija.insert(END, f"[ID:[{x[0]}] {x[1]} - {x[2]}")
 
     brisiGumb = Button(deleteSesijaWin, text="Izbrisi", pady=5, command=deleteSesija)
     brisiGumb.pack()
