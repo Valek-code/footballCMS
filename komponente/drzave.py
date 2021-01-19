@@ -27,11 +27,15 @@ def pokaziDrzave():
 def dodajDrzave():
 
     def drzavaToDb(ime):
-        cursor.execute(f"""INSERT INTO drzava(ime) 
-                                VALUES("{ime}")""")
-        db.commit()
-        clear()
-        alertWindow(f"Drzava {ime} uspjesno dodana u bazu podataka!")
+        try:
+            cursor.execute(f"""INSERT INTO drzava(ime) 
+                                    VALUES("{ime}")""")
+            db.commit()
+            clear()
+            alertWindow(f"Drzava {ime} uspjesno dodana u bazu podataka!")
+
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     def clear():
         entry_ime.delete(0, END)
@@ -54,10 +58,13 @@ def dodajDrzave():
 def deleteDrzavaEntry():
 
     def deleteDrzava():
-        izbor = lista_drzava.get(lista_drzava.curselection())
-        cursor.execute(f"DELETE FROM drzava WHERE ime = '{izbor}'")
-        db.commit()
-        alertWindow(f"Drzava {izbor} uspjesno izbrisana!")
+        try:
+            izbor = lista_drzava.get(lista_drzava.curselection())
+            cursor.execute(f"DELETE FROM drzava WHERE ime = '{izbor}'")
+            db.commit()
+            alertWindow(f"Drzava {izbor} uspjesno izbrisana!")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
 
     deleteDrzavaWin = Tk()
     deleteDrzavaWin.title("Brisanje drzave")
