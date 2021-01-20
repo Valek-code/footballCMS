@@ -17,7 +17,7 @@ CREATE TABLE grad(
 CREATE TABLE tim(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	ime VARCHAR(100) NOT NULL UNIQUE,
-	kratica VARCHAR(5) NOT NULL UNIQUE,
+	kratica VARCHAR(5) NOT NULL,
     id_grad INT NOT NULL,
     FOREIGN KEY (id_grad) REFERENCES grad(id),
 	CONSTRAINT CHK_imeTimLen CHECK ( length(ime) >= 2 ),
@@ -91,12 +91,14 @@ CREATE TABLE sesija(
     FOREIGN KEY (id_stadion) REFERENCES stadion(id)
 );
 
-
+DROP TABLE out_s;
 CREATE TABLE out_s( /* jer nemoze pisati OUT pa je out_s :D */
 	id_sesija INT NOT NULL,
     id_igrac INT NOT NULL,
+    id_tim INT NOT NULL,
     broj_outova INT DEFAULT 0,
     FOREIGN KEY (id_igrac) REFERENCES igrac(id),
+    FOREIGN KEY (id_tim) REFERENCES tim(id),
     FOREIGN KEY (id_sesija) REFERENCES sesija(id)
 );
 
@@ -323,6 +325,40 @@ INSERT INTO igrac(ime, prezime, datum_rodenja, id_grad, id_tim) VALUES
 ("Wilfred ", "Ndidi", STR_TO_DATE('18.04.1994.', '%d.%m.%Y.'), 9, 3),
 ("Demaray", "Gray", STR_TO_DATE('17.10.1993.', '%d.%m.%Y.'), 15, 3);
 
+INSERT INTO stadion(naziv, kapacitet_gledatelja, id_grad) VALUES
+("Maksimir", 50000, 1),
+("Marakana", "70000", 2),
+("Estadio Nacional Mane Garrincha", "70000", 3),
+("Stadion An der Alten Forsterei", "22000", 4),
+("Stadio Olimpico", "70000", 5),
+("Generali Arena", "13000", 6),
+("Stadion Neufeld", "14000", 7),
+("Stadion Pod Goricom", "15000", 8),
+("Fadil Vokrri Stadium", "13000", 9),
+("Stadion Asim Ferhatović Hase", "37000", 10),
+("Estadio Jose Alvalade", "50000", 11),
+("Arena CSKA", "30000", 12),
+("Stadion Hidegkuti Nandor", "5000", 13),
+("Stadion Wojska Polskiego", "30000", 14),
+("Stubberudmyra", "4000", 15),
+("Stadion Edmond Machtens", "11000", 16),
+("TD Place", "24000", 17),
+("Stadion Santiago Bernabeu", "85000", 18),
+("Olimpijski stadion u Ateni", "70000", 19),
+("TCDD Ankara Demirspor Stadium", "3000", 20),
+("Ashgabat Olympic Stadium", "1500", 21),
+("Melat Stadium", "9000", 22),
+("Stadion Petro Sport", "16000", 23),
+("Old Parade Ground", "5000", 24),
+("Emirates Stadium", "60000", 25),
+("Jabna", "2500", 26),
+("Stadion Louis II", "18000", 27),
+("Stadion Sonera", "10000", 28),
+("Stadion Stožice", "16000", 29),
+("Stadion Ajinomoto", "50000", 30),
+("Park Prinčeva", "48000", 31);
+
+
 
 DROP PROCEDURE IF EXISTS pr_4;
 DELIMITER //
@@ -421,7 +457,6 @@ END//
 DELIMITER ;
 
 
-
 DROP TRIGGER IF EXISTS  pazi_spec_znak_grad;
 DELIMITER //
 CREATE TRIGGER pazi_spec_znak_grad
@@ -435,8 +470,6 @@ BEGIN
     
 END//
 DELIMITER ;
-
-
 
 DROP TRIGGER IF EXISTS  pazi_spec_znak_igrac;
 DELIMITER //
@@ -455,7 +488,6 @@ BEGIN
     
 END//
 DELIMITER ;
-
 
 
 
@@ -628,6 +660,7 @@ DELIMITER ;
 select * from udarci;
 
 
+
 DROP TRIGGER IF EXISTS  golovi_vise_od_udaraca;
 DELIMITER //
 CREATE TRIGGER golovi_vise_od_udaraca
@@ -638,7 +671,7 @@ BEGIN
 	DECLARE br_udaraca INT;
     DECLARE br_golova INT;
     
-	SELECT broj_udaraca INTO br_udaraca
+	SELECT ukupno INTO br_udaraca
 		FROM udarci;
         
 	SELECT COUNT(*) INTO br_golova
@@ -762,8 +795,6 @@ END //
 DELIMITER ;
 CALL dobi_zabijace(1);
 
-
-SELECT * FROM trener;
 
 
 -- Izbacuje trenere za svaki tim --
@@ -918,14 +949,9 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT broj_outova FROM out_s JOIN sesija s ON 2 = s.id AND id_tim = s.id_tim1;
-SELECT broj_outova FROM out_s JOIN sesija s ON 1 = s.id AND id_tim = s.id_tim2;
-
 CALL dobi_prosjecno_godina_Timovi(1);
 
-SELECT * FROM udarci JOIN igrac i ON i.id = id_igrac WHERE id_sesija = 1;
 
-SELECT * FROM out_s;
 
  SELECT i.id,t.ime ime_tima,CONCAT(i.ime,' ', i.prezime) as 'Igrac', u.ukupno, u.u_okvir FROM sesija s
 		JOIN tim t ON t.id = s.id_tim1
@@ -964,7 +990,6 @@ SELECT pozicija, COUNT(pozicija) AS broj_igraca_na_toj_poziciji
     GROUP BY pozicija
     ORDER BY id_tim
     LIMIT 1;
-
 SELECT * FROM s_koje_pozicije_ima_najvise_igraca_u_lizi;
 
 
@@ -996,6 +1021,7 @@ SELECT t.ime AS team, COUNT(id_igrac) AS broj_golova_na_utakmici
     
 SELECT * FROM rezultat_na_sesiji;
 
+
 -- 5. view  
 DROP VIEW IF EXISTS udarci_izvan_okvira_ekipe_koja_ima_vise_udaraca_u_jednoj_sesiji;
 CREATE VIEW udarci_izvan_okvira_ekipe_koja_ima_vise_udaraca_u_jednoj_sesiji AS
@@ -1005,7 +1031,6 @@ SELECT ime, ukupno AS ukupan_broj_udaraca, u_okvir,
 	FROM udarci AS udar
     INNER JOIN tim AS t ON t.id = udar.id_tim
     LIMIT 1;
-
 SELECT * FROM udarci_izvan_okvira_ekipe_koja_ima_vise_udaraca_u_jednoj_sesiji;
 
 
@@ -1069,10 +1094,7 @@ SET INFO_IGRAC=CONCAT( 'IME: ',IME,'  -----  ',' PREZIME: ', PREZIME,'  -----  '
 RETURN INFO_IGRAC;
 END//
 DELIMITER ;
-
 SELECT informacije_o_igracu(100) FROM DUAL;
 
 
-
-SELECT * FROM tim;
 
