@@ -4,23 +4,23 @@ USE projekt;
 
 CREATE TABLE drzava(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	ime VARCHAR(100) NOT NULL
+	ime VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE TABLE grad(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	ime VARCHAR(100) NOT NULL,
+	ime VARCHAR(100) NOT NULL UNIQUE,
     id_drzava INT NOT NULL,
     FOREIGN KEY (id_drzava) REFERENCES drzava(id)
 );
 
 CREATE TABLE tim(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	ime VARCHAR(100) NOT NULL,
-	kratica VARCHAR(5) NOT NULL,
+	ime VARCHAR(100) NOT NULL UNIQUE,
+	kratica VARCHAR(5) NOT NULL UNIQUE,
     id_grad INT NOT NULL,
     FOREIGN KEY (id_grad) REFERENCES grad(id),
-	CONSTRAINT CHK_imeLen CHECK ( length(ime) >= 2 ),
+	CONSTRAINT CHK_imeTimLen CHECK ( length(ime) >= 2 ),
 	CONSTRAINT CHK_kraticaLen CHECK ( length(kratica) >= 1 )
 );
 
@@ -33,12 +33,10 @@ CREATE TABLE igrac(
     id_tim INT NOT NULL,
     FOREIGN KEY (id_grad) REFERENCES grad(id),
     FOREIGN KEY (id_tim) REFERENCES tim(id),
-	CONSTRAINT CHK_imeLen CHECK ( length(ime) >= 2 ),
-	CONSTRAINT CHK_prezimeLen CHECK ( length(prezime) >= 2 )
+	CONSTRAINT CHK_imeIgracLen CHECK ( length(ime) >= 2 ),
+	CONSTRAINT CHK_prezimeIgracLen CHECK ( length(prezime) >= 2 )
 );
 
-ALTER TABLE igrac ADD CONSTRAINT CHK_imeLen CHECK ( length(ime) >= 5 );
-ALTER TABLE igrac ADD CONSTRAINT CHK_prezimeLen CHECK ( length(prezime) >= 3 );
 
 CREATE TABLE trener(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -49,8 +47,8 @@ CREATE TABLE trener(
     id_tim INT NOT NULL,
     FOREIGN KEY (id_grad) REFERENCES grad(id),
     FOREIGN KEY (id_tim) REFERENCES tim(id),
-	CONSTRAINT CHK_imeLen CHECK ( length(ime) >= 2 ),
-	CONSTRAINT CHK_prezimeLen CHECK ( length(prezime) >= 2 )
+	CONSTRAINT CHK_imeTrenerLen CHECK ( length(ime) >= 2 ),
+	CONSTRAINT CHK_prezimeTrenerLen CHECK ( length(prezime) >= 2 )
 );
 
 CREATE TABLE sudac(
@@ -60,8 +58,8 @@ CREATE TABLE sudac(
     datum_rodenja DATETIME,
     id_grad INT NOT NULL,
     FOREIGN KEY (id_grad) REFERENCES grad(id),
-	CONSTRAINT CHK_imeLen CHECK ( length(ime) >= 2 ),
-	CONSTRAINT CHK_prezimeLen CHECK ( length(prezime) >= 2 )
+	CONSTRAINT CHK_imeSudacLen CHECK ( length(ime) >= 2 ),
+	CONSTRAINT CHK_prezimeSudacLen CHECK ( length(prezime) >= 2 )
 );
 
 CREATE TABLE postava(
@@ -76,7 +74,7 @@ CREATE TABLE stadion(
     kapacitet_gledatelja INT NOT NULL,
     id_grad INT NOT NULL,
     FOREIGN KEY (id_grad) REFERENCES grad(id),
-	CONSTRAINT CHK_imeLen CHECK ( length(naziv) >= 2 )
+	CONSTRAINT CHK_imeStadionLen CHECK ( length(naziv) >= 2 )
 );
 
 CREATE TABLE sesija(
@@ -93,6 +91,7 @@ CREATE TABLE sesija(
     FOREIGN KEY (id_stadion) REFERENCES stadion(id)
 );
 
+
 CREATE TABLE out_s( /* jer nemoze pisati OUT pa je out_s :D */
 	id_sesija INT NOT NULL,
     id_tim INT NOT NULL,
@@ -100,6 +99,7 @@ CREATE TABLE out_s( /* jer nemoze pisati OUT pa je out_s :D */
     FOREIGN KEY (id_tim) REFERENCES tim(id),
     FOREIGN KEY (id_sesija) REFERENCES sesija(id)
 );
+
 
 CREATE TABLE gol(
 	id_sesija INT NOT NULL,
@@ -132,13 +132,41 @@ CREATE TABLE udarci(
     FOREIGN KEY (id_igrac) REFERENCES igrac(id)
 );
 
+
 INSERT INTO drzava(ime) 
 VALUES
 ("Hrvatska"),
 ("Srbija"),
 ("Brazil"),
 ("Njemačka"),
+("Italija"),
+("Austrija"),
+("Švicarska"),
+("Crna Gora"),
+("Kosovo"),
+("Bosna i Hercegovina"),
+("Portugal"),
+("Rusija"),
+("Mađarska"),
+("Poljska"),
+("Norveška"),
+("Belgija"),
+("Kanada"),
+("Španjolska"),
+("Grčka"),
+("Turska"),
+("Turkmenistan"),
+("Afganistan"),
+("Egipat"),
+("Nigerija"),
+("Engleska"),
+("Izrael"),
+("Monaco"),
+("Finska"),
+("Slovenija"),
+("Japan"),
 ("Francuska");
+
 
 INSERT INTO grad(ime, id_drzava) 
 VALUES
@@ -146,34 +174,157 @@ VALUES
 ("Beograd", 2),
 ("Brasilia", 3),
 ("Berlin", 4),
-("Paris", 5);
+("Rim", 5),
+("Beč", 6),
+("Bern", 7),
+("Podgorica", 8),
+("Priština", 9),
+("Sarajevo", 10),
+("Lisabon", 11),
+("Moskva", 12),
+("Budimpešta", 13),
+("Varšava", 14),
+("Oslo", 15),
+("Bruixeulles", 16),
+("Ottowa", 17),
+("Madrid", 18),
+("Atena", 19),
+("Ankara", 20),
+("Asgabat", 21),
+("Kabul", 22),
+("Cairo", 23),
+("Abuja", 24),
+("London", 25),
+("Jeruzalem", 26),
+("Monako", 27),
+("Helsinki", 28),
+("Ljubljana", 29),
+("Tokyo", 30),
+("Paris", 31);
 
-SELECT * FROM grad;
-SELECT * FROM drzava;
-SELECT * FROM tim;
-INSERT INTO tim(id, ime, kratica, id_grad) 
-VALUES
-(1,"Dinamo", "DZG", 1),
-(2, "Crvena Zvezda", "CZV", 2),
-(3, "Sport Club Mangueira", "SCM",3),
-(4, "Bayern", "FCB",4),
-(5, "Paris Saint-Germain","PSG", 5);
 
-INSERT INTO igrac(id, ime, prezime, datum_rodenja, id_grad, id_tim) VALUES
-(1, "Alen", "Valek", STR_TO_DATE('10.10.2000.', '%d.%m.%Y.'), 1, 1),
-(2, "Maja", "Vrh", STR_TO_DATE('11.10.2000.', '%d.%m.%Y.'),  1, 1),
-(3, "Matej", "Kurevija", STR_TO_DATE('12.10.2000.', '%d.%m.%Y.'), 2, 2),
-(4, "Deni", "Vidan", STR_TO_DATE('14.10.2000.', '%d.%m.%Y.'), 2, 2),
-(5, "Andrej", "Korica", STR_TO_DATE('15.10.2000.', '%d.%m.%Y.'), 3, 3),
-(6, "Elena", "Ilic", STR_TO_DATE('18.10.2000.', '%d.%m.%Y.'), 4, 4),
-(7, "David", "Sajina", STR_TO_DATE('19.10.2000.', '%d.%m.%Y.'), 4, 4);
+INSERT INTO tim (ime, kratica, id_grad)VALUES
+("Hajduk", "HAJ", 1),
+("Crvena zvezda", "CRZ", 2),
+("Brazil national footbal team", "BFT",3),
+("Hertha BSC", "BSC", 4),
+("A.S. Roma", "ASR", 5),
+("FK Austria", "FKA", 6),
+("BSC Bern", "BSC", 7),
+("Bratstvo Cijevina", "BRC", 8),
+("FC Priština", "FCP", 9),
+("FK Sarajevo", "FKS", 10),
+("Sporting CP", "SCP", 11),
+("FC Moscow", "FCM", 12),
+("FK Budapešt", "FKB", 13),
+("Legia" , "LEG", 14),
+("Lyn fotball", "LYF", 15),
+("Anderlecht", "ANL", 16),
+("Ottawa Fury", "OTF", 17),
+("Real Madrid", "RMA", 18),
+("AEK FC", "AEK", 19),
+("Ankaraspor", "AKS", 20),
+("FC Asgabat", "ASG", 21),
+("Afganistan NFT", "AFG", 22),
+("Wadi Degla", "WAD", 23),
+("Abuja FC", "ABJ", 24),
+("Arsenal FC", "ARS", 25),
+("Beitar", "BEI", 26),
+("AS Monaco", "MON", 27),
+("HIFK", "HIF", 28),
+("NK Olimpija", "OLI", 29),
+("FC TOKYO", "TOK", 30),
+("PSG FR", "PSG", 31);
 
-INSERT INTO trener(id, ime, prezime, datum_rodenja, id_grad, id_tim) VALUES(7, "Trener", "Šajina", STR_TO_DATE('10.10.2000.', '%d.%m.%Y.'), 1, 2);
-INSERT INTO trener(id, ime, prezime, datum_rodenja, id_grad, id_tim) VALUES(8, "Trener", "Valek", STR_TO_DATE('10.10.2000.', '%d.%m.%Y.'), 1, 1);
 
-Select ime from igrac;
+INSERT INTO trener(ime, prezime, datum_rodenja, id_grad, id_tim) VALUES
+("Jorge", "Jesus", STR_TO_DATE('09.10.1960.', '%d.%m.%Y.'), 1, 1),
+("Ernesto", "Valverede", STR_TO_DATE('05.05.1965.', '%d.%m.%Y.'), 2, 2),
+("Renato", "Gaucho", STR_TO_DATE('15.02.1971.', '%d.%m.%Y.'), 3, 3),
+("Richard", "Ferretti", STR_TO_DATE('01.03.1965.', '%d.%m.%Y.'), 4, 4),
+("Jose", "Bordalas", STR_TO_DATE('02.04.1964.', '%d.%m.%Y.'), 5, 5),
+("Tiago", "Nunes", STR_TO_DATE('06.04.1963.', '%d.%m.%Y.'), 6, 6),
+("Rui", "Vitoria", STR_TO_DATE('08.08.1967.', '%d.%m.%Y.'), 7, 7),
+("Imanol", "Alguacil", STR_TO_DATE('14.10.1962.', '%d.%m.%Y.'), 8, 8),
+("Jose", "Morais", STR_TO_DATE('16.05.1960.', '%d.%m.%Y.'), 9, 9),
+("Paul", "Fonseca", STR_TO_DATE('13.11.1969.', '%d.%m.%Y.'), 10, 10),
+("Bruno", "Lage", STR_TO_DATE('12.12.1968.', '%d.%m.%Y.'), 11, 11),
+("Odair", "Hellmann", STR_TO_DATE('08.10.1964.', '%d.%m.%Y.'), 12, 12),
+("Luiz", "Scolari", STR_TO_DATE('04.11.1972.', '%d.%m.%Y.'), 13, 13),
+("Unai", "Emery", STR_TO_DATE('02.05.1964.', '%d.%m.%Y.'), 14, 14),
+("Javi", "Calleja", STR_TO_DATE('19.10.1969.', '%d.%m.%Y.'), 15, 15);
 
-drop procedure pr_4;
+
+INSERT INTO sudac(ime, prezime, datum_rodenja, id_grad) VALUES
+("Frank", "Bleeckere", STR_TO_DATE('19.11.1975.', '%d.%m.%Y.'), 1),
+("Oscar", "Ruiz", STR_TO_DATE('25.05.1975.', '%d.%m.%Y.'), 2),
+("Pedro", "Proenca", STR_TO_DATE('15.02.1978.', '%d.%m.%Y.'), 3),
+("Michel", "Vautrot", STR_TO_DATE('16.03.1969.', '%d.%m.%Y.'), 4),
+("Peter", "Mikkelsen", STR_TO_DATE('12.05.1970.', '%d.%m.%Y.'), 5),
+("Sandro", "Puhl", STR_TO_DATE('13.06.1975.', '%d.%m.%Y.'), 6),
+("Kim", "Milton", STR_TO_DATE('18.08.1971.', '%d.%m.%Y.'), 7),
+("Howard", "Webb", STR_TO_DATE('14.10.1970.', '%d.%m.%Y.'), 8),
+("Markus", "Merk", STR_TO_DATE('20.06.1974.', '%d.%m.%Y.'), 9),
+("Pier", "Collina", STR_TO_DATE('13.11.1969.', '%d.%m.%Y.'), 10),
+("Yasmin", "Haidari", STR_TO_DATE('12.03.1971.', '%d.%m.%Y.'), 11),
+("Jorgji", "Enea", STR_TO_DATE('18.10.1969.', '%d.%m.%Y.'), 12),
+("Atman", "Lamia", STR_TO_DATE('02.11.1970.', '%d.%m.%Y.'), 13),
+("Joao", "Goma", STR_TO_DATE('04.02.1968.', '%d.%m.%Y.'), 14),
+("Helder", "Rodrigues", STR_TO_DATE('19.10.1969.', '%d.%m.%Y.'), 15),
+("Tania", "Duarte", STR_TO_DATE('09.07.1970.', '%d.%m.%Y.'), 16),
+("Iola", "Simmons", STR_TO_DATE('15.06.1971.', '%d.%m.%Y.'), 17),
+("Mauro", "Vigliano", STR_TO_DATE('13.09.1973.', '%d.%m.%Y.'), 18),
+("Fernando", "Rapallini", STR_TO_DATE('14.10.1970.', '%d.%m.%Y.'), 18),
+("Nestor", "Pitana", STR_TO_DATE('24.12.1969.', '%d.%m.%Y.'), 19),
+("Patricio", "Lousstau", STR_TO_DATE('26.01.1972.', '%d.%m.%Y.'), 20);
+
+
+INSERT INTO igrac(ime, prezime, datum_rodenja, id_grad, id_tim) VALUES
+("Cristiano ", "Ronaldo", STR_TO_DATE('09.10.1975.', '%d.%m.%Y.'), 1, 1),
+("Lionel", "Messi", STR_TO_DATE('05.06.1978.', '%d.%m.%Y.'), 2, 2),
+("Luis", "Suarez", STR_TO_DATE('15.04.1980.', '%d.%m.%Y.'), 3, 3),
+("Manuel ", "Neuer", STR_TO_DATE('05.03.1985.', '%d.%m.%Y.'), 4, 4), 
+("Robert", "Lewandowski", STR_TO_DATE('01.04.1974.', '%d.%m.%Y.'), 5, 5),
+("Sergio ", "Ramos", STR_TO_DATE('06.12.1970.', '%d.%m.%Y.'), 6, 6),
+("Eden ", "Hazard", STR_TO_DATE('05.11.1973.', '%d.%m.%Y.'), 7, 7),
+("Toni ", "Kroos", STR_TO_DATE('14.01.1969.', '%d.%m.%Y.'), 8, 8),
+("Gonzalo ", "Higuain", STR_TO_DATE('16.05.1990.', '%d.%m.%Y.'), 9, 9),
+("Luka ", "Modric", STR_TO_DATE('13.03.1969.', '%d.%m.%Y.'), 10, 10),
+("Gianluigi ", "Buffon ", STR_TO_DATE('14.06.1985.', '%d.%m.%Y.'), 11, 11), 
+("Antoine  ", "Griezmann", STR_TO_DATE('08.06.1984.', '%d.%m.%Y.'), 12, 12),
+("Jan  ", "Oblak", STR_TO_DATE('04.10.1982.', '%d.%m.%Y.'), 13, 13), 
+("Zlatan ", "Ibrahimovic", STR_TO_DATE('02.08.1964.', '%d.%m.%Y.'), 14, 14),
+("Edinson ", "Cavani", STR_TO_DATE('02.01.1965.', '%d.%m.%Y.'), 4, 15),
+("Paul  ", "Pogba", STR_TO_DATE('07.01.1973.', '%d.%m.%Y.'), 11, 16),
+("Romelu  ", "Lukaku", STR_TO_DATE('08.09.1976.', '%d.%m.%Y.'), 11, 17),
+("Ivan  ", "Rakitic", STR_TO_DATE('14.11.1978.', '%d.%m.%Y.'), 10, 18),
+("Franck  ", "Ribery", STR_TO_DATE('14.05.1985.', '%d.%m.%Y.'), 9, 19),
+("Diego  ", "Costa", STR_TO_DATE('13.12.1991.', '%d.%m.%Y.'), 8, 20),
+("Ivan ", "Perišić", STR_TO_DATE('02.12.1992.', '%d.%m.%Y.'), 8, 1),
+("Domagoj ", "Vida", STR_TO_DATE('06.04.1993.', '%d.%m.%Y.'), 7, 1),
+("Fernando   ", "Torres", STR_TO_DATE('08.08.1999.', '%d.%m.%Y.'), 7, 2),
+("Xabi ", "Alonso", STR_TO_DATE('14.10.1985.', '%d.%m.%Y.'), 8, 1),
+("Šime ", "Vresaljko", STR_TO_DATE('16.05.1967.', '%d.%m.%Y.'), 9, 2),
+("Didier ", "Drogba", STR_TO_DATE('08.05.1971.', '%d.%m.%Y.'), 7, 1),
+("Sergio ", "Busquets", STR_TO_DATE('14.11.1962.', '%d.%m.%Y.'), 8, 1),
+("Dejan ", "Lovren", STR_TO_DATE('18.05.1987.', '%d.%m.%Y.'), 9, 1),
+("Kylan", "Mbappe", STR_TO_DATE('17.06.1971.', '%d.%m.%Y.'), 15, 2),
+("Ivan ", "Šaponjić", STR_TO_DATE('14.11.1991.', '%d.%m.%Y.'), 8, 2),
+("Yannick ", "Carrasco", STR_TO_DATE('15.05.1977.', '%d.%m.%Y.'), 9, 3),
+("Thomas ", "Lemar", STR_TO_DATE('08.06.1978.', '%d.%m.%Y.'), 7, 3),
+("Kieran ", "Trippier", STR_TO_DATE('15.07.1962.', '%d.%m.%Y.'), 8, 3),
+("Renan ", "Lodi", STR_TO_DATE('18.08.1999.', '%d.%m.%Y.'), 9, 3),
+("Stefan", "Savić", STR_TO_DATE('17.12.1991.', '%d.%m.%Y.'), 15, 1),
+("Federico", "Velverde", STR_TO_DATE('08.01.1998.', '%d.%m.%Y.'), 7, 1),
+("Aleix ", "Vidal", STR_TO_DATE('14.04.1997.', '%d.%m.%Y.'), 8, 1),
+("Nemanja ", "Gudelj", STR_TO_DATE('16.04.1997.', '%d.%m.%Y.'), 9, 1),
+("Diego ", "Carlos", STR_TO_DATE('08.03.1996.', '%d.%m.%Y.'), 7, 1),
+("Samuel ", "Umtiti", STR_TO_DATE('14.10.1995.', '%d.%m.%Y.'), 8, 2),
+("Wilfred ", "Ndidi", STR_TO_DATE('18.04.1994.', '%d.%m.%Y.'), 9, 3),
+("Demaray", "Gray", STR_TO_DATE('17.10.1993.', '%d.%m.%Y.'), 15, 3);
+
+
+DROP PROCEDURE IF EXISTS pr_4;
 DELIMITER //
 CREATE PROCEDURE pr_4 (IN i_id INT, OUT r VARCHAR(700), OUT r2 VARCHAR(60))
 BEGIN
@@ -235,21 +386,11 @@ DELIMITER ;
 CALL pr_4(1,@rez,@r);
 SELECT @r,@rez;
 SELECT * FROM trener;
--- -- -- -- -- -- -- Ispisuje sve o igracima odabirom id tim -- -- -- -- -- -- --
-SELECT i.id, i.ime, i.prezime, t.ime as tim, d.ime as drzava, g.ime as grad, tr.Ime as Ime_Trener, tr.prezime as Prez_Trener
- FROM igrac AS i LEFT JOIN tim AS t
- ON i.id_tim=t.id
- LEFT JOIN drzava as d ON i.id_drzava=d.id
- LEFT JOIN grad as g ON i.id_grad=g.id
- LEFT JOIN trener as tr ON tr.id_tim=t.id
- WHERE i.id_tim=1 /* umjesto 1 vanjska varijabla X */
- GROUP BY i.id;
+
  
- INSERT INTO sudac(ime, prezime, datum_rodenja, id_grad) VALUES('Alen','Valek',STR_TO_DATE('21/12/1999', '%d/%m/%Y'), 1);
- 
- drop function br_s;
- DELIMITER //
- CREATE FUNCTION br_s (  p_id_sudac INT) RETURNS INT
+drop function IF EXISTS br_s;
+DELIMITER //
+CREATE FUNCTION br_s (  p_id_sudac INT) RETURNS INT
 DETERMINISTIC 
 	BEGIN 
 	DECLARE rez INT;
@@ -262,17 +403,9 @@ END //
 DELIMITER ;
 SELECT br_s(4);
 
-SELECT * FROM tim;
-
-SELECT * FROM igrac;
-DELETE FROM igrac WHERE id='8';
-
-
-
 
 
 ## TRIGGERI / PROCEDURE
-
 DROP TRIGGER IF EXISTS  pazi_spec_znak_drzava;
 DELIMITER //
 CREATE TRIGGER pazi_spec_znak_drzava
@@ -288,7 +421,6 @@ END//
 DELIMITER ;
 
 
-SELECT * FROM drzava;
 
 DROP TRIGGER IF EXISTS  pazi_spec_znak_grad;
 DELIMITER //
@@ -327,7 +459,6 @@ DELIMITER ;
 
 
 
-
 DROP TRIGGER IF EXISTS  pazi_spec_znak_trener;
 DELIMITER //
 CREATE TRIGGER pazi_spec_znak_trener
@@ -349,11 +480,10 @@ DELIMITER ;
 
 
 
-
 DROP TRIGGER IF EXISTS  pazi_spec_znak_sudac;
 DELIMITER //
 CREATE TRIGGER pazi_spec_znak_sudac
-	BEFORE INSERT ON tim
+	BEFORE INSERT ON sudac
 	FOR EACH ROW
 BEGIN
 
@@ -367,8 +497,6 @@ BEGIN
     
 END//
 DELIMITER ;
-
-
 
 
 
@@ -431,6 +559,34 @@ BEGIN
     
 END//
 DELIMITER ;
+
+
+
+DROP TRIGGER IF EXISTS  br_igraca_u_sesiji;
+DELIMITER //
+CREATE TRIGGER br_igraca_u_sesiji
+	BEFORE INSERT ON sesija
+	FOR EACH ROW
+BEGIN
+
+	DECLARE broj_igraca_u_timu1 INT;
+    DECLARE broj_igraca_u_timu2 INT;
+    
+    SELECT COUNT(*) INTO broj_igraca_u_timu1
+		FROM igrac i
+		WHERE i.id_tim = new.id_tim1;
+	
+    SELECT COUNT(*) INTO broj_igraca_u_timu2
+		FROM igrac i
+		WHERE i.id_tim = new.id_tim2;
+
+	IF NOT broj_igraca_u_timu1 >= 11 AND NOT broj_igraca_u_timu2 >=11  THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Broj igraca u timovima nije dovoljan za unijeti sesiju';
+	END IF;
+    
+END//
+DELIMITER ;
+
 
 
 
@@ -560,21 +716,6 @@ BEGIN
 END //
 DELIMITER ;
 
-
-SELECT * FROM sesija;
-
-SELECT * FROM igrac;
-SELECT * FROM grad;
-
-INSERT INTO sudac VALUES(1, 'Alen', 'Sudac', '1999-12-1 12:00:00', 2);
-INSERT INTO stadion VALUES(1,'Ze stadion',2000,1);
-INSERT INTO sesija VALUES(1,1,2,1,1,'2020-12-1 12:00:00');
-
-INSERT INTO gol VALUES(1,1,1,'2011-12-18 13:17:17');
-INSERT INTO gol VALUES(1,2,4,'2011-12-18 13:17:30');
-
-
-
 -- Izbacuje najboljeg igraca u utakmici u neku out varijablu --
 
 DROP PROCEDURE IF EXISTS game_mvp;
@@ -695,14 +836,6 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT * FROM sudac;
-SELECT * FROM drzava;
-COMMIT;
-DELETE FROM drzava WHERE id = 6;
-call dobi_golove_u_sesiji(1);
-DELETE FROM gol WHERE YEAR(vrijeme) = 2011;
-SELECT * FROM gol;
-
 
 -- Izbacuje prosjek godina svih igraca u sesiji --
 
@@ -785,8 +918,6 @@ BEGIN
 END //
 DELIMITER ;
 
-ALTER TABLE out_s ADD COLUMN id_igrac INT NOT NULL REFERENCES igrac(id);
-
 SELECT broj_outova FROM out_s JOIN sesija s ON 2 = s.id AND id_tim = s.id_tim1;
 SELECT broj_outova FROM out_s JOIN sesija s ON 1 = s.id AND id_tim = s.id_tim2;
 
@@ -826,7 +957,7 @@ SELECT * FROM teren_s_najvise_odigranih_utakmica;
 
 
 -- 2. view
-DROP VIEW s_koje_pozicije_ima_najvise_igraca_u_lizi;
+DROP VIEW IF EXISTS s_koje_pozicije_ima_najvise_igraca_u_lizi;
 CREATE VIEW s_koje_pozicije_ima_najvise_igraca_u_lizi AS
 SELECT pozicija, COUNT(pozicija) AS broj_igraca_na_toj_poziciji
 	FROM postava
@@ -893,7 +1024,7 @@ SELECT * FROM broj_outovi_manji_od_10;
 -- 7, view
 DROP VIEW IF EXISTS igrac_s_zutim_kartonom;
 CREATE VIEW igrac_s_zutim_kartonom AS
-SELECT i.ime, i.prezime, s.tip_kazne
+SELECT i.ime, i.prezime, k.tip_kazne
 FROM igrac AS i, kazne AS k
 WHERE i.id = k.id_igrac
 GROUP BY i.prezime
@@ -941,6 +1072,7 @@ DELIMITER ;
 
 SELECT informacije_o_igracu(100) FROM DUAL;
 
-SELECT * FROM igrac;
-SELECT * FROM grad;
-DELETE FROM igrac where id = 10;
+
+
+SELECT * FROM tim;
+
