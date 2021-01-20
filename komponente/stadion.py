@@ -36,7 +36,7 @@ def dodajStadione():
                                     VALUES("{naziv}",{kapacitet},{id_grad})""")
             db.commit()
             clear()
-            alertWindow(f"Stadion {ime} uspjesno dodan u bazu podataka!")
+            alertWindow(f"Stadion {naziv} uspjesno dodan u bazu podataka!")
         except Exception as e:
             alertWindow(f'Došlo je do greške [{e}]')
 
@@ -72,7 +72,7 @@ def dodajStadione():
     lista_gradova.grid(row=2, column=1)
 
 
-    dodajStadionGumb = Button(dodajStadion, text="Dodaj", command=lambda:stadionToDb(entry_ime.get(), entry_kapacitet.get(), getGradIDFromName ))
+    dodajStadionGumb = Button(dodajStadion, text="Dodaj", command=lambda:stadionToDb(entry_ime.get(), entry_kapacitet.get(), getGradIDFromName() ))
     dodajStadionGumb.grid(row=5, column=1, columnspan=2)
 
     popuniGradIzbor(lista_gradova)
