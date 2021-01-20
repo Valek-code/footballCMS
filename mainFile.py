@@ -117,7 +117,12 @@ trazistatistiku_entry = Entry(frame12)
 trazistatistiku_entry.grid(row=0, column=1)
 
 traziStatistikuGumb = Button(frame12, text="Trazi", pady=15, padx=250, command=lambda:statistika.traziStatisiku(trazistatistiku_entry.get()))
+ispisiStatistikuGumbXlsx = Button(frame12, text="Ispis - XLSX", pady=15, padx=250, command=lambda:statistika.spremiStatistiku(trazistatistiku_entry.get()))
+ispisiStatistikuGumbTxt = Button(frame12, text="Ispis - TXT", pady=15, padx=250, command=lambda:statistika.SpremiStatistikuTxt(trazistatistiku_entry.get()))
+
 traziStatistikuGumb.grid(row=1, column=0,columnspan=12)
+ispisiStatistikuGumbXlsx.grid(row=2, column=0,columnspan=12)
+ispisiStatistikuGumbTxt.grid(row=3, column=0,columnspan=12)
 
 # gumbi frame 2
 dodaj_trenere_gumb = Button(frame4, text="Dodaj trenera", pady=15, padx=250, command=treneri.dodajTrenera)

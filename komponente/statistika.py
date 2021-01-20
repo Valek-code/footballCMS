@@ -77,7 +77,7 @@ def SpremiStatistikuTxt(sesija_id):
         File_object.write(f'\n \n \n')
         # tim2
         cursor.execute(
-            f"SELECT i.ime as Ime, i.prezime as Prezime FROM igrac as i where id_tim=(SELECT id_tim2 FROM sesija)")
+            f"SELECT i.ime as Ime, i.prezime as Prezime FROM igrac as i where id_tim=(SELECT id_tim2 FROM sesija WHERE id = {sesija_id})")
         rezultati = cursor.fetchall()
         File_object.write(f'{ime_tim2[0]} \n')
         File_object.write(f'-------------------------------------------------------- \n')
@@ -271,17 +271,8 @@ def spremiStatistiku(sesija_id):
 
             zadnji_y2 = 2
 
-            cursor.execute(
-    f'''
-    SELECT CONCAT(i.ime,' ', i.prezime), t.ime FROM sesija s
-    JOIN tim t ON t.id = s.id_tim1
-    JOIN igrac i ON i.id_tim = t.id
-    UNION
-    SELECT CONCAT(i.ime,' ', i.prezime), t.ime FROM sesija s
-    JOIN tim t ON t.id = s.id_tim2
-    JOIN igrac i ON i.id_tim = t.id;
-    ''')
-            igraciTimovi = cursor.fetchall()
+
+
 
 
             for result in results:
