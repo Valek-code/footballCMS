@@ -35,7 +35,7 @@ def dodajOut(sesija_id):
 
     def outUDB(id_sesije, id_tim, id_igrac, broj_outova):
         try:
-            cursor.execute(f"""INSERT INTO out_s(id_sesija, id_tim, id_igrac, broj_outova)
+            cursor.execute(f"""INSERT INTO out_s(id_sesija,id_tim, id_igrac, broj_outova)
                                     VALUES({id_sesije},{id_tim},{id_igrac},{broj_outova})""")
             db.commit()
             alertWindow(f"Outevi uspjesno dodani u bazu podataka!")

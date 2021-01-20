@@ -271,15 +271,25 @@ def spremiStatistiku(sesija_id):
 
             zadnji_y2 = 2
 
-
-
-
-
             for result in results:
                 workSheet.write(zadnji_y, zadnji_x, result[1])
                 workSheet.write(zadnji_y, zadnji_x_prez, result[2])
                 workSheet.write(zadnji_y, zadnji_x_prez+1, result[0])
                 zadnji_y = zadnji_y + 1
+
+
+            cursor.execute(
+                f'''
+                SELECT CONCAT(i.ime,' ', i.prezime), t.ime FROM sesija s
+                JOIN tim t ON t.id = s.id_tim1
+                JOIN igrac i ON i.id_tim = t.id
+                UNION
+                SELECT CONCAT(i.ime,' ', i.prezime), t.ime FROM sesija s
+                JOIN tim t ON t.id = s.id_tim2
+                JOIN igrac i ON i.id_tim = t.id;
+                ''')
+
+            igraciTimovi = cursor.fetchall()
 
             for r in igraciTimovi:
                 workSheet.write(zadnji_y2, 7, r[0])

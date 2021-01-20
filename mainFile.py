@@ -68,7 +68,6 @@ my_notebook.add(frame13, text="Extra")
 
 
 
-
 test_label = Label(frame5, text="No records to show", bg="white")
 
 
@@ -210,7 +209,6 @@ izbrisi_outeve_gumb = Button(frame10, text="Brisanje zapisa o outevima", pady=15
 dodaj_outeve_gumb.pack()
 prikazi_outeve_gumb.pack()
 izbrisi_outeve_gumb.pack()
-
 
 
 root.mainloop()
