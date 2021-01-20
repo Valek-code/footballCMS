@@ -94,9 +94,9 @@ CREATE TABLE sesija(
 
 CREATE TABLE out_s( /* jer nemoze pisati OUT pa je out_s :D */
 	id_sesija INT NOT NULL,
-    id_tim INT NOT NULL,
+    id_igrac INT NOT NULL,
     broj_outova INT DEFAULT 0,
-    FOREIGN KEY (id_tim) REFERENCES tim(id),
+    FOREIGN KEY (id_igrac) REFERENCES igrac(id),
     FOREIGN KEY (id_sesija) REFERENCES sesija(id)
 );
 
