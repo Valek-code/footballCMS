@@ -17,7 +17,7 @@ CREATE TABLE grad(
 CREATE TABLE tim(
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	ime VARCHAR(100) NOT NULL UNIQUE,
-	kratica VARCHAR(5) NOT NULL,
+	kratica VARCHAR(5) NOT NULL UNIQUE,
     id_grad INT NOT NULL,
     FOREIGN KEY (id_grad) REFERENCES grad(id),
 	CONSTRAINT CHK_imeTimLen CHECK ( length(ime) >= 2 ),
@@ -91,7 +91,6 @@ CREATE TABLE sesija(
     FOREIGN KEY (id_stadion) REFERENCES stadion(id)
 );
 
-DROP TABLE out_s;
 CREATE TABLE out_s( /* jer nemoze pisati OUT pa je out_s :D */
 	id_sesija INT NOT NULL,
     id_igrac INT NOT NULL,
@@ -386,9 +385,9 @@ DECLARE kursor5 CURSOR FOR
 SELECT prezime from trener;
 DECLARE kursor6 CURSOR FOR
 SELECT id_tim from trener;
-DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET  f=1;
-SET r='Igraci';
-SET r2=' ';
+DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET  f=1, br=1;
+SET r='Igraci ';
+SET r2='';
 
 OPEN kursor4; OPEN kursor5; OPEN kursor6;
 petlja: LOOP 
@@ -419,7 +418,7 @@ CLOSE kursor; CLOSE kursor2; CLOSE kursor3;
 END//
 DELIMITER ;
 
-CALL pr_4(1,@rez,@r);
+CALL pr_4(2,@rez,@r);
 SELECT @r,@rez;
 SELECT * FROM trener;
 
@@ -760,7 +759,7 @@ BEGIN
     
     SELECT id_igrac INTO id_mvpa
 		FROM gol
-        WHERE id_sesija = 1
+        WHERE id_sesija = ses_id
         GROUP BY id_igrac
         ORDER BY COUNT(id_igrac) DESC
         LIMIT 1;
@@ -885,12 +884,12 @@ BEGIN
     SELECT i.datum_rodenja FROM sesija s
 		JOIN tim t ON t.id = s.id_tim1
 		JOIN igrac i ON i.id_tim = t.id
-		WHERE s.id = 1
+		WHERE s.id = id_sesije
 	UNION
 	SELECT i.datum_rodenja FROM sesija s
 		JOIN tim t ON t.id = s.id_tim2
 		JOIN igrac i ON i.id_tim = t.id
-		WHERE s.id = 1;
+		WHERE s.id = id_sesije;
         
 	SELECT AVG(YEAR(datum_rodenja)) FROM tempIgraciGodine INTO prosjecna_godina;
     
@@ -924,14 +923,14 @@ BEGIN
     SELECT i.datum_rodenja FROM sesija s
 		JOIN tim t ON t.id = s.id_tim1
 		JOIN igrac i ON i.id_tim = t.id
-		WHERE s.id = 1;
+		WHERE s.id = id_sesije;
         
 	DROP TEMPORARY TABLE IF EXISTS tempIgraciGodineTim2;
     CREATE TEMPORARY TABLE tempIgraciGodineTim2
 	SELECT i.datum_rodenja FROM sesija s
 		JOIN tim t ON t.id = s.id_tim2
 		JOIN igrac i ON i.id_tim = t.id
-		WHERE s.id = 1;
+		WHERE s.id = id_sesije;
         
 	SELECT AVG(YEAR(datum_rodenja)) FROM tempIgraciGodineTim1 INTO prosjecna_godina_tim1;
 	SELECT AVG(YEAR(datum_rodenja)) FROM tempIgraciGodineTim2 INTO prosjecna_godina_tim2;
@@ -976,6 +975,7 @@ SELECT g.ime, stad.naziv, stad.kapacitet_gledatelja, COUNT(id_stadion) AS najvis
     INNER JOIN stadion AS stad ON stad.id = ses.id_stadion
     INNER JOIN grad AS g ON g.id = stad.id_grad
     GROUP BY id_stadion
+    ORDER BY najvise_odigranih_utakmica DESC
     LIMIT 1;
 
 SELECT * FROM teren_s_najvise_odigranih_utakmica;
@@ -988,7 +988,7 @@ CREATE VIEW s_koje_pozicije_ima_najvise_igraca_u_lizi AS
 SELECT pozicija, COUNT(pozicija) AS broj_igraca_na_toj_poziciji
 	FROM postava
     GROUP BY pozicija
-    ORDER BY id_tim
+    ORDER BY broj_igraca_na_toj_poziciji DESC
     LIMIT 1;
 SELECT * FROM s_koje_pozicije_ima_najvise_igraca_u_lizi;
 
@@ -996,13 +996,13 @@ SELECT * FROM s_koje_pozicije_ima_najvise_igraca_u_lizi;
 -- 3. view
 DROP VIEW IF EXISTS postignuti_pogodci_na_sesiji;
 CREATE VIEW postignuti_pogodci_na_sesiji AS
-SELECT i.ime, i.prezime, t.ime AS team, COUNT(id_igrac) AS broj_golova_na_utakmici
+SELECT i.ime, i.prezime, COUNT(id_igrac) AS broj_golova_na_utakmici
 	FROM gol AS g
     INNER JOIN igrac AS i ON i.id = g.id_igrac
     INNER JOIN tim AS t ON t.id = i.id_tim
     WHERE id_sesija = 1
     GROUP BY id_igrac
-    ORDER BY g.id_tim;
+    ORDER BY broj_golova_na_utakmici DESC;
     
 SELECT * FROM postignuti_pogodci_na_sesiji;
 
@@ -1053,7 +1053,7 @@ SELECT i.ime, i.prezime, k.tip_kazne
 FROM igrac AS i, kazne AS k
 WHERE i.id = k.id_igrac
 GROUP BY i.prezime
-HAVING k.tip_kazne = 'zuti karton'
+HAVING k.tip_kazne = 'zuti'
 ORDER BY i.ime ASC;
 
 SELECT * FROM igrac_s_zutim_kartonom;
@@ -1095,6 +1095,3 @@ RETURN INFO_IGRAC;
 END//
 DELIMITER ;
 SELECT informacije_o_igracu(100) FROM DUAL;
-
-
-
