@@ -261,7 +261,7 @@ def spremiStatistiku(sesija_id):
                     JOIN igrac i ON i.id_tim = t.id
                     JOIN gol g ON i.id = g.id_igrac
                     WHERE s.id = {sesija_id};
-    
+
                 ''')
             results = cursor.fetchall()
 
@@ -283,10 +283,12 @@ def spremiStatistiku(sesija_id):
                 SELECT CONCAT(i.ime,' ', i.prezime), t.ime FROM sesija s
                 JOIN tim t ON t.id = s.id_tim1
                 JOIN igrac i ON i.id_tim = t.id
+                WHERE s.id = {sesija_id}
                 UNION
                 SELECT CONCAT(i.ime,' ', i.prezime), t.ime FROM sesija s
                 JOIN tim t ON t.id = s.id_tim2
-                JOIN igrac i ON i.id_tim = t.id;
+                JOIN igrac i ON i.id_tim = t.id
+                WHERE s.id = {sesija_id};
                 ''')
 
             igraciTimovi = cursor.fetchall()
@@ -394,7 +396,7 @@ def traziStatisiku(sesija_id):
 		JOIN igrac i ON i.id_tim = t.id
         JOIN gol g ON i.id = g.id_igrac
 		WHERE s.id = {sesija_id};
-    
+
     ''')
 
     test_label3 = Label(pokaziStatistiku, text=f'GOLOVI: ')
