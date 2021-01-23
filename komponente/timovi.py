@@ -168,7 +168,7 @@ def UpdateTim():
     entry_kratica = Entry(UpdateTimWin)
     entry_kratica.grid(row=3, column=1)
 
-    mjenjajKraticuGumb = Button(UpdateTimWin, text="Update ime", command=lambda: updateKratica(entry_id.get(), entry_kratica.get()))
+    mjenjajKraticuGumb = Button(UpdateTimWin, text="Update kraticu", command=lambda: updateKratica(entry_id.get(), entry_kratica.get()))
     mjenjajKraticuGumb.grid(row=4, column=1, columnspan=2)
 
     label_idg = Label(UpdateTimWin, text="ID grada")
@@ -177,5 +177,5 @@ def UpdateTim():
     entry_idg = Entry(UpdateTimWin)
     entry_idg.grid(row=5, column=1)
 
-    mjenjajIdgGumb = Button(UpdateTimWin, text="Update ime", command=lambda: updateGrad(entry_id.get(), entry_idg.get()))
+    mjenjajIdgGumb = Button(UpdateTimWin, text="Update ID grada", command=lambda: updateGrad(entry_id.get(), entry_idg.get()))
     mjenjajIdgGumb.grid(row=6, column=1, columnspan=2)
