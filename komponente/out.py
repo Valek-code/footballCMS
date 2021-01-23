@@ -1,4 +1,3 @@
-
 from tkinter import *
 from tkinter import ttk
 import mysql.connector
@@ -43,7 +42,7 @@ def updateOutove():
     entry_brOut = Entry(updateOutoveWin)
     entry_brOut.grid(row=2, column=1)
 
-    updejtajOutoveGumb = Button(updateOutoveWin, text="Update", command=lambda: updateOutove(entry_idSesije.get(), entry_idIgraca.get(), entry_brOut.get()))
+    updejtajOutoveGumb = Button(updateOutoveWin, text="Update", command=lambda: updateOutoviFunc(entry_idSesije.get(), entry_idIgraca.get(), entry_brOut.get()))
     updejtajOutoveGumb.grid(row=3, column=1, columnspan=2)
 
 def dodajOut(sesija_id):
@@ -113,7 +112,6 @@ def prikaziSveOutovePoSesiji(sesija_id):
     prikaziOutove.geometry("350x500")
 
     cursor.execute(f"""
-
     SELECT i.id,t.ime ime_tima,CONCAT(i.ime,' ', i.prezime) as 'Igrac', o.broj_outova FROM sesija s
 		JOIN tim t ON t.id = s.id_tim1
 		JOIN igrac i ON i.id_tim = t.id
@@ -125,7 +123,6 @@ def prikaziSveOutovePoSesiji(sesija_id):
 		JOIN igrac i ON i.id_tim = t.id
         JOIN out_s o ON i.id = o.id_igrac
 		WHERE s.id = {sesija_id};
-
 """)
     rezultati = cursor.fetchall()
 
