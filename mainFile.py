@@ -156,7 +156,7 @@ update_igraca_gumb.pack()
 dodaj_sesija_gumb = Button(frame8, text="Dodaj sesiju", pady=15, padx=250, command=sesije.dodajSesiju)
 prikazi_sesije_gumb = Button(frame8, text="Prikazi sve sesije", pady=15, padx=250, command=sesije.pokaziSesije)
 izbrisi_sesija_gumb = Button(frame8, text="Brisanje sesija", pady=15, padx=250, command=sesije.deleteSesijaEntry)
-update_sesija_gumb = Button(frame8, text="Update sesija", pady=15, padx=250, command=sesije.deleteSesijaEntry)
+update_sesija_gumb = Button(frame8, text="Update sesija", pady=15, padx=250, command=sesije.updateSesija)
 
 dodaj_sesija_gumb.pack()
 prikazi_sesije_gumb.pack()
