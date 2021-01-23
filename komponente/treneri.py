@@ -97,7 +97,7 @@ def updatetrener():
 
 ############
 
-    label_prezime = Label(updatetrenerWin, text = 'Novo prezime igrača :')
+    label_prezime = Label(updatetrenerWin, text = 'Novo prezime trenera :')
     label_prezime.grid(row=3, column=0)
 
     entry_prezime = Entry(updatetrenerWin)
