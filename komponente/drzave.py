@@ -8,6 +8,40 @@ from komponente.selekcije import *
 from komponente.alertWindows import *
 
 
+def updateDrzave():
+
+    def updateDrzavaFunc(_id, _ime):
+        if not _id or not _ime or _id == '' or _ime == '':
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"UPDATE drzava SET ime = '{_ime}' WHERE id = {_id}")
+            db.commit()
+            alertWindow(f'Uspješno izmjenjeno.')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    updateDrzaveWin = Tk()
+    updateDrzaveWin.title("Update drzava")
+    updateDrzaveWin.geometry("250x300")
+
+    label_id = Label(updateDrzaveWin, text="Ime države: ")
+    label_id.grid(row=0, column=0)
+
+    entry_idDrzave = Entry(updateDrzaveWin)
+    entry_idDrzave.grid(row=0, column=1)
+
+    label_ime = Label(updateDrzaveWin, text="Novo ime države: ")
+    label_ime.grid(row=1, column=0)
+
+    entry_ime = Entry(updateDrzaveWin)
+    entry_ime.grid(row=1, column=1)
+
+    updejtajDrzavuGumb = Button(updateDrzaveWin, text="Update", command=lambda: updateDrzavaFunc(entry_idDrzave.get(), entry_ime.get()))
+    updejtajDrzavuGumb.grid(row=2, column=1, columnspan=2)
+
+
 #dohvaca sve sudce i ispisuje ih na zaseban prozor
 def pokaziDrzave():
     prikaziDrzave = Tk()
@@ -19,7 +53,7 @@ def pokaziDrzave():
 
     for index,rezultat in enumerate(rezultati):
 
-        test_label = Label(prikaziDrzave, text=f"{index+1}. {rezultat[1]}", bg="white")
+        test_label = Label(prikaziDrzave, text=f"ID:{rezultat[0]}. {rezultat[1]}", bg="white")
         test_label.pack()
 
 

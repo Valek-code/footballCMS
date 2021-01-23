@@ -8,6 +8,140 @@ from komponente.selekcije import *
 from komponente.alertWindows import *
 
 
+
+def updateIgrac():
+
+    def updateIgracImeFunc(_id, _ime):
+
+        if not _id or not _ime or _id == '' or _ime == '':
+            alertWindow('Trebate upisati sve parametre ili id nije upisan')
+            return
+
+        try:
+            cursor.execute(f"UPDATE igrac SET ime = '{_ime}' WHERE id = {_id}")
+            db.commit()
+            alertWindow('Uspješna izmjena!')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    def updateIgracPrezimeFunc(_id, _ime):
+
+        if not _id or not _ime or _id == '' or _ime == '':
+            alertWindow('Trebate upisati sve parametre ili id nije upisan')
+            return
+
+        try:
+            cursor.execute(f"UPDATE igrac SET ime = '{_ime}' WHERE id = {_id}")
+            db.commit()
+            alertWindow('Uspješna izmjena!')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    def updateIgracDatumRodenjaFunc(_id, _datum):
+
+        if not _id or not _datum or _id == '' or _datum == '':
+            alertWindow('Trebate upisati sve parametre ili id nije upisan')
+            return
+
+        try:
+            cursor.execute(f"UPDATE igrac SET datum_rodenja = str_to_date('{_datum}','%d/%m/%Y') WHERE id = {_id}")
+            db.commit()
+            alertWindow('Uspješna izmjena!')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    def updateTimImeFunc(_id, _ime):
+        if not _id or not _ime or _id == '' or _ime == '':
+            alertWindow('Trebate upisati sve parametre ili id nije upisan')
+            return
+        try:
+            cursor.execute(f"UPDATE igrac SET id_tim = (SELECT id FROM tim WHERE ime = '{_ime}') WHERE id = {_id}")
+            db.commit()
+            alertWindow('Uspješna izmjena!')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    def updateGradImeFunc(_id, _ime):
+        if not _id or not _ime or _id == '' or _ime == '':
+            alertWindow('Trebate upisati sve parametre ili id nije upisan')
+            return
+        try:
+            cursor.execute(f"UPDATE igrac SET id_grad = (SELECT id FROM grad WHERE ime = '{_ime}') WHERE id = {_id}")
+            db.commit()
+            alertWindow('Uspješna izmjena!')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    updateIgracWin = Tk()
+    updateIgracWin.title("Update igraci")
+    updateIgracWin.geometry("250x300")
+
+    label_id = Label(updateIgracWin, text="ID igraca: ")
+    label_id.grid(row=0, column=0)
+
+    entry_idIgraca = Entry(updateIgracWin)
+    entry_idIgraca.grid(row=0, column=1)
+
+    label_ime = Label(updateIgracWin, text="Novo ime igraca: ")
+    label_ime.grid(row=1, column=0)
+
+    entry_ime = Entry(updateIgracWin)
+    entry_ime.grid(row=1, column=1)
+
+    updejtajImeGumb = Button(updateIgracWin, text="Update ime igraca", command=lambda: updateIgracImeFunc(entry_idIgraca.get(), entry_ime.get()))
+    updejtajImeGumb.grid(row=2, column=1, columnspan=2)
+
+############
+
+    label_prezime = Label(updateIgracWin, text = 'Novo prezime igrača :')
+    label_prezime.grid(row=3, column=0)
+
+    entry_prezime = Entry(updateIgracWin)
+    entry_prezime.grid(row=3, column=1)
+
+    updejtajPrezimeGumb = Button(updateIgracWin, text="Update prezime igraca", command=lambda: updateIgracPrezimeFunc(entry_idIgraca.get(), entry_prezime.get()))
+    updejtajPrezimeGumb.grid(row=4, column=1, columnspan=2)
+
+############
+
+    label_datum = Label(updateIgracWin, text='Datum_rodenja\n(dd/mm/yyyy)')
+    label_datum.grid(row=5, column=0)
+
+    entry_datum = Entry(updateIgracWin)
+    entry_datum.grid(row=5, column=1)
+
+    updejtajDatumGumb = Button(updateIgracWin, text="Update datum rodenja igraca", command=lambda: updateIgracDatumRodenjaFunc(entry_idIgraca.get(), entry_datum.get()))
+    updejtajDatumGumb.grid(row=6, column=1, columnspan=2)
+
+
+############
+
+    label_grad = Label(updateIgracWin, text='Ime novog grada: ')
+    label_grad.grid(row=7, column=0)
+
+    entry_grad = Entry(updateIgracWin)
+    entry_grad.grid(row=7, column=1)
+
+    updejtajGradGumb = Button(updateIgracWin, text="Update grad igraca", command=lambda: updateGradImeFunc(entry_idIgraca.get(), entry_grad.get()))
+    updejtajGradGumb.grid(row=8, column=1, columnspan=2)
+
+############
+
+    label_tim = Label(updateIgracWin, text='Ime novog tima: ')
+    label_tim.grid(row=9, column=0)
+
+    entry_tim = Entry(updateIgracWin)
+    entry_tim.grid(row=9, column=1)
+
+    updejtajTimGumb = Button(updateIgracWin, text="Update datum rodenja igraca", command=lambda: updateTimImeFunc(entry_idIgraca.get(), entry_tim.get()))
+    updejtajTimGumb.grid(row=10, column=1, columnspan=2)
+
+
 #dohvaca sve igrace i ispisuje ih na zaseban prozor
 def pokaziIgrace():
     igraci = Tk()

@@ -7,7 +7,68 @@ from komponente.sqlConnection import *
 from komponente.selekcije import *
 from komponente.alertWindows import *
 
+def updateUdarce():
 
+    def updateUdarciUkupnoFunc(_id, _idIgraca, _brUkupno):
+        if not _id or not _idIgraca or _id == '' or _idIgraca == '' or _brUkupno == '' or not _brUkupno:
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"UPDATE udarci SET ukupno = '{_brUkupno}' WHERE id_sesija = {_id} AND id_igrac = {_idIgraca}")
+            db.commit()
+            alertWindow(f'Uspješno izmjenjeno.')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    def updateUdarciUOkvirFunc(_id, _idIgraca, _brUokvir):
+        if not _id or not _idIgraca or _id == '' or _idIgraca == '' or _brUokvir == '' or not _brUokvir:
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"UPDATE udarci SET ukupno = '{_brUkupno}' WHERE id_sesija = {_id} AND id_igrac = {_idIgraca}")
+            db.commit()
+            alertWindow(f'Uspješno izmjenjeno.')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    updateUdarceWin = Tk()
+    updateUdarceWin.title("Update udarci")
+    updateUdarceWin.geometry("250x300")
+
+    label_id = Label(updateUdarceWin, text="ID sesije: ")
+    label_id.grid(row=0, column=0)
+
+    entry_idSesije = Entry(updateUdarceWin)
+    entry_idSesije.grid(row=0, column=1)
+
+    label_idIgraca = Label(updateUdarceWin, text="ID igrača: ")
+    label_idIgraca.grid(row=1, column=0)
+
+    entry_idIgraca = Entry(updateUdarceWin)
+    entry_idIgraca.grid(row=1, column=1)
+
+    label_brOut = Label(updateUdarceWin, text="Novi broj ukupno: ")
+    label_brOut.grid(row=2, column=0)
+
+    entry_brOut = Entry(updateUdarceWin)
+    entry_brOut.grid(row=2, column=1)
+
+    updejtajUdarceGumb = Button(updateUdarceWin, text="Update ukupno", command=lambda: updateUdarce(entry_idSesije.get(), entry_idIgraca.get(), entry_brOut.get()))
+    updejtajUdarceGumb.grid(row=3, column=1, columnspan=2)
+
+    label_brOutss = Label(updateUdarceWin, text="Novi broj u okvir: ")
+    label_brOutss.grid(row=4, column=0)
+
+    entry_brOutss = Entry(updateUdarceWin)
+    entry_brOutss.grid(row=4, column=1)
+
+    updejtajUdarceOkGumb = Button(updateUdarceWin, text="Update u okvir",command=lambda: updateUdarciUOkvirFunc(entry_idSesije.get(), entry_idIgraca.get(), entry_brOutss.get()))
+    updejtajUdarceOkGumb.grid(row=5, column=1, columnspan=2)
+
+
+#####
 
 def dodajUdarce(sesija_id):
     dodaj_udarce = Tk()

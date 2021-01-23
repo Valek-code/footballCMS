@@ -8,6 +8,77 @@ from komponente.sqlConnection import *
 from komponente.selekcije import *
 from komponente.alertWindows import *
 
+def updateGolove():
+    updateGolWin = Tk()
+    updateGolWin.title("Update golove")
+    updateGolWin.geometry("250x300")
+
+
+    def updateGoloviIgracFunc(_id, _vrijeme, _noviIdGraca, _idIgraca):
+
+        if not _id or not _idIgraca or _id == '' or _idIgraca == '' or _noviIdGraca == '' or not _noviIdGraca:
+            alertWindow('Trebate upisati sve parametre ili jedan od id-eva nije unesen')
+            return
+        try:
+            cursor.execute(f"UPDATE gol SET id_igrac = {_noviIdGraca} WHERE id_sesija = {_id} AND id_igrac = {_idIgraca} AND vrijeme = str_to_date('{_vrijeme}','%d/%m/%Y %H:%i')")
+            db.commit()
+            alertWindow(f'Uspješno izmjenjeno.')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    def updateGoloviVrijemeFunc(_id, _vrijeme,_novoVrijeme, _idIgraca):
+        if not _id or not _idIgraca or _id == '' or _idIgraca == '' or not _novoVrijeme or _novoVrijeme == '':
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"UPDATE gol SET vrijeme = str_to_date('{_novoVrijeme}','%d/%m/%Y %H:%i') WHERE id_sesija = {_id} AND id_igrac = {_idIgraca} AND vrijeme = str_to_date('{_vrijeme}','%d/%m/%Y %H:%i')")
+            db.commit()
+            alertWindow(f'Uspješno izmjenjeno.')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    label_id_sesija = Label(updateGolWin, text="ID sesije: ")
+    label_id_sesija.grid(row=1, column=0)
+
+    entry_id_sesija = Entry(updateGolWin)
+    entry_id_sesija.grid(row=1, column=1)
+
+
+    label_id_igrac = Label(updateGolWin, text="ID igraca: ")
+    label_id_igrac.grid(row=2, column=0)
+
+    entry_id_igrac = Entry(updateGolWin)
+    entry_id_igrac.grid(row=2, column=1)
+
+
+    label_id_vrijeme = Label(updateGolWin, text="Vrijeme\ndd/mm/YYYY H:MIN:")
+    label_id_igrac.grid(row=3, column=0)
+
+    entry_vrijeme = Entry(updateGolWin)
+    entry_vrijeme.grid(row=3, column=1)
+
+
+    label_id_novi_igrac = Label(updateGolWin, text="ID novog igraca: ")
+    label_id_igrac.grid(row=4, column=0)
+
+    entry_id_novi_igrac = Entry(updateGolWin)
+    entry_id_novi_igrac.grid(row=4, column = 1)
+
+
+    updejtGoloviGumb = Button(updateGolWin, text="Update novi igrac", command=lambda:updateGoloviIgracFunc(entry_id_sesija.get(), entry_vrijeme.get(), entry_id_novi_igrac.get(), entry_id_igrac.get()))
+    updejtGoloviGumb.grid(row=5, column = 1, columnspan=2)
+
+
+    label_id_novo_vrijeme = Label(updateGolWin, text="Vrijeme(novo)\ndd/mm/YYYY H:MIN:")
+    label_id_novo_vrijeme.grid( row=6, column=0 )
+
+    entry_id_novo_vrijeme = Entry(updateGolWin)
+    entry_id_novo_vrijeme.grid( row=6, column = 1 )
+
+    updejtGoloviGumb = Button(updateGolWin, text="Update novo vrijeme",command=lambda: updateGoloviIgracFunc(entry_id_sesija.get(), entry_vrijeme.get(),entry_id_novo_vrijeme.get(), entry_id_igrac.get()))
+    updejtGoloviGumb.grid(row=7, column=1, columnspan=2)
 
 
 def dodajGolove(sesija_id):

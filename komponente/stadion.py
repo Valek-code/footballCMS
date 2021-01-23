@@ -7,6 +7,58 @@ from komponente.sqlConnection import *
 from komponente.selekcije import *
 from komponente.alertWindows import *
 
+def updateStadion():
+
+    def updateStadionImeFunc(_id, _ime):
+        if not _id or not _ime or _id == '' or _ime == '':
+            alertWindow('Trebate upisati sve parametre ili id nije upisan')
+            return
+        try:
+            cursor.execute(f"UPDATE stadion SET naziv = '{_ime}' WHERE id = {_id}")
+            db.commit()
+            alertWindow('Uspješna izmjena!')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+    def updateGradImeFunc(_id, _ime):
+        if not _id or not _ime or _id == '' or _ime == '':
+            alertWindow('Trebate upisati sve parametre ili id nije upisan')
+            return
+        try:
+            cursor.execute(f"UPDATE stadion SET id_grad = (SELECT id FROM grad WHERE ime = '{_ime}') WHERE id = {_id}")
+            db.commit()
+            alertWindow('Uspješna izmjena!')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+    updateStadionWin = Tk()
+    updateStadionWin.title("Update stadion")
+    updateStadionWin.geometry("250x300")
+
+    label_id = Label(updateStadionWin, text="ID grada: ")
+    label_id.grid(row=0, column=0)
+
+    entry_idStadiona = Entry(updateStadionWin)
+    entry_idStadiona.grid(row=0, column=1)
+
+    label_ime = Label(updateStadionWin, text="Novo ime\nstadiona: ")
+    label_ime.grid(row=1, column=0)
+
+    entry_ime = Entry(updateStadionWin)
+    entry_ime.grid(row=1, column=1)
+
+    updejtajStadionGumb = Button(updateStadionWin, text="Update ime stadiona", command=lambda: updateStadionImeFunc(entry_idStadiona.get(), entry_ime.get()))
+    updejtajStadionGumb.grid(row=2, column=1, columnspan=2)
+
+    label_ime_grada = Label(updateStadionWin, text='Ime novog grada :')
+    label_ime_grada.grid(row=3, column=0)
+
+    entry_ime_grada = Entry(updateStadionWin)
+    entry_ime_grada.grid(row=3, column=1)
+
+    updejtajGradGumb = Button(updateStadionWin, text="Update >grad< stadion", command=lambda: updateGradImeFunc(entry_idStadiona.get(), entry_ime_grada.get()))
+    updejtajGradGumb.grid(row=4, column=1, columnspan=2)
+
 
 #dohvaca sve sudce i ispisuje ih na zaseban prozor
 def pokaziStadione():
@@ -60,7 +112,7 @@ def dodajStadione():
     entry_ime.grid(row= 0, column=1)
 
     label_kapacitet = Label(dodajStadion, text="Kapacitet gledatelja:")
-    label_kapacitet.grid(row=1, column=1)
+    label_kapacitet.grid(row=1, column=0)
 
     entry_kapacitet = Entry(dodajStadion)
     entry_kapacitet.grid(row=1, column=1)

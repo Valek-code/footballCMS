@@ -7,7 +7,44 @@ from komponente.sqlConnection import *
 from komponente.selekcije import *
 from komponente.alertWindows import *
 
+def updateOutove():
 
+    def updateOutoviFunc(_id, _idIgraca, _brOut):
+        if not _id or not _idIgraca or _id == '' or _idIgraca == '' or _brOut == '' or not _brOut:
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"UPDATE out_s SET broj_outova = '{_brOut}' WHERE id_sesija = {_id} AND id_igrac = {_idIgraca}")
+            db.commit()
+            alertWindow(f'Uspješno izmjenjeno.')
+        except Exception as e:
+            alertWindow(f'Došlo je do greške {e}')
+
+
+    updateOutoveWin = Tk()
+    updateOutoveWin.title("Update outove")
+    updateOutoveWin.geometry("250x300")
+
+    label_id = Label(updateOutoveWin, text="ID sesije: ")
+    label_id.grid(row=0, column=0)
+
+    entry_idSesije = Entry(updateOutoveWin)
+    entry_idSesije.grid(row=0, column=1)
+
+    label_idIgraca = Label(updateOutoveWin, text="ID igrača: ")
+    label_idIgraca.grid(row=1, column=0)
+
+    entry_idIgraca = Entry(updateOutoveWin)
+    entry_idIgraca.grid(row=1, column=1)
+
+    label_brOut = Label(updateOutoveWin, text="Novi broj outova: ")
+    label_brOut.grid(row=2, column=0)
+
+    entry_brOut = Entry(updateOutoveWin)
+    entry_brOut.grid(row=2, column=1)
+
+    updejtajOutoveGumb = Button(updateOutoveWin, text="Update", command=lambda: updateOutove(entry_idSesije.get(), entry_idIgraca.get(), entry_brOut.get()))
+    updejtajOutoveGumb.grid(row=3, column=1, columnspan=2)
 
 def dodajOut(sesija_id):
     dodajOut = Tk()
