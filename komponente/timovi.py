@@ -108,3 +108,74 @@ def dodajTim():
 
     dodajTim_gumb = Button(dodajTim, text="Dodaj", command=lambda:timToDb(entry_ime.get(),entry_kratica.get(), getGradIDFromName()))
     dodajTim_gumb.grid(row=4, column=1, columnspan=2)
+
+def UpdateTim():
+
+    def updateIme(_id, _ime):
+        if not _id or not _ime or _id =='' or _ime == '' :
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"UPDATE tim SET ime= '{_ime}' where id = {_id}")
+            db.commit()
+            alertWindow(f"Podaci uspjesno izmjenjeni")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    def updateKratica(_id, _kratica):
+        if not _id or not _kratica or _id =='' or _kratica == '' :
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"""UPDATE tim SET kratica= '{_kratica}' where id = {_id}""")
+            db.commit()
+            alertWindow(f"Podaci uspjesno izmjenjeni")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    def updateGrad(_id, _grad):
+        if not _id or not _grad or _id =='' or _grad == '' :
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"""UPDATE tim SET id_grad= '{_grad}' where id = {_id}""")
+            db.commit()
+            alertWindow(f"Podaci uspjesno izmjenjeni")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    UpdateTimWin = Tk()
+    UpdateTimWin.title("Update timovi")
+    UpdateTimWin.geometry("250x500")
+
+    label_id = Label(UpdateTimWin, text=f"ID Tima", bg="white")
+    label_id.grid(row=0, column=0)
+    entry_id = Entry(UpdateTimWin)
+    entry_id.grid(row=0, column=1)
+
+    label_ime = Label(UpdateTimWin, text="Novo ime")
+    label_ime.grid(row=1, column=0)
+
+    entry_ime = Entry(UpdateTimWin)
+    entry_ime.grid(row=1, column=1)
+
+    UpdateImeGumb = Button(UpdateTimWin, text="Update ime", command=lambda: updateIme(entry_id.get(), entry_ime.get()))
+    UpdateImeGumb.grid(row=2, column=1, columnspan=2)
+
+    label_kratica = Label(UpdateTimWin, text="Ime kratice")
+    label_kratica.grid(row=3, column=0)
+
+    entry_kratica = Entry(UpdateTimWin)
+    entry_kratica.grid(row=3, column=1)
+
+    mjenjajKraticuGumb = Button(UpdateTimWin, text="Update ime", command=lambda: updateKratica(entry_id.get(), entry_kratica.get()))
+    mjenjajKraticuGumb.grid(row=4, column=1, columnspan=2)
+
+    label_idg = Label(UpdateTimWin, text="ID grada")
+    label_idg.grid(row=5, column=0)
+
+    entry_idg = Entry(UpdateTimWin)
+    entry_idg.grid(row=5, column=1)
+
+    mjenjajIdgGumb = Button(UpdateTimWin, text="Update ime", command=lambda: updateGrad(entry_id.get(), entry_idg.get()))
+    mjenjajIdgGumb.grid(row=6, column=1, columnspan=2)

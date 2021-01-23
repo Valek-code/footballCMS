@@ -145,3 +145,121 @@ JOIN tim t2 ON t2.id = s.id_tim2;
 
     brisiGumb = Button(deleteSesijaWin, text="Izbrisi", pady=5, command=deleteSesija)
     brisiGumb.pack()
+
+
+def updateSesija(): #id, id_tim1,2 id sudac id stadion datumsesija
+
+    def updatetim1(_id, _tim1):
+        if not _id or not _tim1 or _id =='' or _tim1 == '' :
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"UPDATE sesija SET id_tim1= '{_tim1}' where id = {_id}")
+            db.commit()
+            alertWindow(f"Podaci uspjesno izmjenjeni")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    def updatetim2(_id, _tim2):
+        if not _id or not _tim2 or _id =='' or _tim2 == '' :
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"""UPDATE sesija SET id_tim2= '{_tim2}' where id = {_id}""")
+            db.commit()
+            alertWindow(f"Podaci uspjesno izmjenjeni")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    def updateSudac(_id, _idsudac):
+        if not _id or not _idsudac or _id =='' or _idsudac == '' :
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"""UPDATE sesija SET id_sudac= '{_idsudac}' where id = {_id}""")
+            db.commit()
+            alertWindow(f"Podaci uspjesno izmjenjeni")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    def updateStadion(_id, _stadion):
+        if not _id or not _stadion or _id =='' or _stadion == '' :
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"""UPDATE sesija SET id_stadion= '{_stadion}' where id = {_id}""")
+            db.commit()
+            alertWindow(f"Podaci uspjesno izmjenjeni")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    def updateDatum(_id, _datum):
+        if not _id or not _datum or _id =='' or _datum == '' :
+            alertWindow('Trebate upisati sve parametre')
+            return
+        try:
+            cursor.execute(f"""UPDATE sesija SET datum_sesija= STR_TO_DATE('{_datum}','%d/%m/%Y %H:%i') where id = {_id}""")
+            db.commit()
+            alertWindow(f"Podaci uspjesno izmjenjeni")
+        except Exception as e:
+            alertWindow(f'Došlo je do greške [{e}]')
+
+    updateSesijaWin = Tk()
+    updateSesijaWin.title("Update sesija")
+    updateSesijaWin.geometry("250x500")
+
+    tlabel = Label(updateSesijaWin, text=f"ID Sesije", bg="white")
+    tlabel.grid(row=0, column=0)
+    id_entry = Entry(updateSesijaWin)
+    id_entry.grid(row=0, column=1)
+
+    label_tim1 = Label(updateSesijaWin, text="Novo ID tima 1")
+    label_tim1.grid(row=1, column=0)
+
+    entry_tim1 = Entry(updateSesijaWin)
+    entry_tim1.grid(row=1, column=1)
+
+    mjenjajtim1 = Button(updateSesijaWin, text="Update tim1", command=lambda: updatetim1(id_entry.get(), entry_tim1.get()))
+    mjenjajtim1.grid(row=2, column=1, columnspan=2)###
+    ##
+
+    label_tim2 = Label(updateSesijaWin, text="Novo ID tima 2")
+    label_tim2.grid(row=3, column=0)
+
+    entry_tim2 = Entry(updateSesijaWin)
+    entry_tim2.grid(row=3, column=1)
+
+    mjenjajtim2 = Button(updateSesijaWin, text="Update tim2", command=lambda: updatetim2(id_entry.get(), entry_tim2.get()))
+    mjenjajtim2.grid(row=4, column=1, columnspan=2)
+
+####
+    label_sudac = Label(updateSesijaWin, text="Novi ID suca")
+    label_sudac.grid(row=5, column=0)
+
+    entry_sudac = Entry(updateSesijaWin)
+    entry_sudac.grid(row=5, column=1)
+
+    mjenjajsudac = Button(updateSesijaWin, text="Update sudac", command=lambda: updateSudac(id_entry.get(), entry_sudac.get()))
+    mjenjajsudac.grid(row=6, column=1, columnspan=2)
+
+    ###
+
+    label_stadion = Label(updateSesijaWin, text="Novi ID stadiona ")
+    label_stadion.grid(row=7, column=0)
+
+    entry_stadion = Entry(updateSesijaWin)
+    entry_stadion.grid(row=7, column=1)
+
+    mjenjajstadion = Button(updateSesijaWin, text="Update stadion", command=lambda: updateStadion(id_entry.get(), entry_stadion.get()))
+    mjenjajstadion.grid(row=8, column=1, columnspan=2)
+
+    ###
+
+    label_datum = Label(updateSesijaWin, text="Novi datum: d/m/Y H:m ")
+    label_datum.grid(row=9, column=0)
+
+    entry_datum = Entry(updateSesijaWin)
+    entry_datum.grid(row=9, column=1)
+
+    mjenjajdatum = Button(updateSesijaWin, text="Update datum",  command=lambda: updateDatum(id_entry.get(), entry_datum.get()))
+    mjenjajdatum.grid(row=10, column=1, columnspan=2)
